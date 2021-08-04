@@ -1,5 +1,5 @@
 import Head from "next/head";
-import ReactDiffViewer from 'react-diff-viewer';
+import ReactDiffViewer from "react-diff-viewer";
 import test from "./lib/example";
 
 const P = require("prismjs");
@@ -37,31 +37,50 @@ export async function getStaticProps() {
     props: {
       diffs,
     },
-  }
+  };
 }
 
 type Props = {
-  diffs: {newFileContent:string, oldFileContent:string}[]
-}
+  diffs: { newFileContent: string; oldFileContent: string }[];
+};
 
-const Post: React.FC<Props> = function({ diffs }) {
+const Post: React.FC<Props> = function ({ diffs }) {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-2">
       <Head>
         <title>Create Next App!</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      {
-        diffs.map((diff, index) => {
-          return <ReactDiffViewer key={index} oldValue={diff.oldFileContent} newValue={diff.newFileContent} splitView={false} leftTitle="webpack.config.js master@2178133 - pushed 2 hours ago."
-          rightTitle="webpack.config.js master@64207ee - pushed 13 hours ago." renderContent={syntaxHighlight}/>
-        })
-      }
-      <ReactDiffViewer oldValue={oldCode} newValue={newCode} splitView={false} leftTitle="webpack.config.js master@2178133 - pushed 2 hours ago."
-            rightTitle="webpack.config.js master@64207ee - pushed 13 hours ago." renderContent={syntaxHighlight}/>
+      {diffs.map((diff, index) => {
+        return (
+          <ReactDiffViewer
+            key={index}
+            oldValue={diff.oldFileContent}
+            newValue={diff.newFileContent}
+            splitView={false}
+            leftTitle="webpack.config.js master@2178133 - pushed 2 hours ago."
+            rightTitle="webpack.config.js master@64207ee - pushed 13 hours ago."
+            renderContent={syntaxHighlight}
+          />
+        );
+      })}
+      <ReactDiffViewer
+        oldValue={oldCode}
+        newValue={newCode}
+        splitView={false}
+        leftTitle="webpack.config.js master@2178133 - pushed 2 hours ago."
+        rightTitle="webpack.config.js master@64207ee - pushed 13 hours ago."
+        renderContent={syntaxHighlight}
+      />
 
-<ReactDiffViewer oldValue={oldCode} newValue={newCode} splitView={false} leftTitle="webpack.config.js master@2178133 - pushed 2 hours ago."
-            rightTitle="webpack.config.js master@64207ee - pushed 13 hours ago." renderContent={syntaxHighlight}/>
+      <ReactDiffViewer
+        oldValue={oldCode}
+        newValue={newCode}
+        splitView={false}
+        leftTitle="webpack.config.js master@2178133 - pushed 2 hours ago."
+        rightTitle="webpack.config.js master@64207ee - pushed 13 hours ago."
+        renderContent={syntaxHighlight}
+      />
 
       <main className="flex flex-col items-center justify-center w-full flex-1 px-20 text-center">
         <h1 className="text-6xl font-bold">
@@ -133,6 +152,6 @@ const Post: React.FC<Props> = function({ diffs }) {
       </footer>
     </div>
   );
-}
+};
 
 export default Post;

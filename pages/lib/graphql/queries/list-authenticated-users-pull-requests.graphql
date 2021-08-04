@@ -1,0 +1,18 @@
+query ListAuthenticatedUsersPullRequests { 
+    viewer { 
+        # 100 is max without pagination
+        pullRequests(first:100) {
+            nodes {
+                number
+                repository {
+                    isPrivate
+                    name
+                    owner {
+                        login
+                    }
+                }
+                        
+            }
+        }
+    }
+}

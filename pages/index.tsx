@@ -1,33 +1,37 @@
 import Head from "next/head";
 import ReactDiffViewer from "react-diff-viewer";
+
 import test from "./lib/example";
+import File from "./lib/file";
 
 const P = require("prismjs");
+const loadLanguages = require("prismjs/components/");
 
-const oldCode = `
-const a = 10
-const b = 10
-const c = () => console.log('foo')
+const syntaxHighlight = (language: string | null): any => {
+  return (str: string) => {
+    if (!str) return;
 
-if(a > 10) {
-  console.log('bar')
-}
+    try {
+      loadLanguages([language]);
+    } catch {
+      console.log(language, "module not found");
+      return str;
+    }
 
-console.log('done')
-`;
-const newCode = `
-const a = 10
-const boo = 10
+    const languageNotSupported = P.languages[language] === undefined;
+    if (languageNotSupported) {
+      console.log(language, "not supported");
+      return str;
+    }
 
-if(a === 10) {
-  console.log('bar')
-}
-`;
+    // If language not detected
+    if (language === null) {
+      return str;
+    }
 
-const syntaxHighlight = (str: string): any => {
-  if (!str) return;
-  const language = P.highlight(str, P.languages.javascript);
-  return <span dangerouslySetInnerHTML={{ __html: language }} />;
+    const highlightedSyntaxHTML = P.highlight(str, P.languages[language]);
+    return <span dangerouslySetInnerHTML={{ __html: highlightedSyntaxHTML }} />;
+  };
 };
 
 export async function getStaticProps() {
@@ -41,61 +45,74 @@ export async function getStaticProps() {
 }
 
 type Props = {
-  diffs: { newFileContent: string; oldFileContent: string }[];
+  diffs: {
+    newFile: File;
+    oldFile: File;
+    numDiffLines: number;
+  }[];
 };
 
 const Post: React.FC<Props> = function ({ diffs }) {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-2">
+    <div>
+      {diffs
+        .filter((diff) => diff.numDiffLines < 100)
+        .map((diff, index) => {
+          return (
+            <div key={index} className="relative overflow-x-scroll max-w-3xl">
+              {/** TODO: fix absolute scrolling issue and long file paths */}
+              <a href={diff.oldFile.url} className="absolute right-0">
+                <img
+                  src="/github.png"
+                  alt="View Source on GitHub"
+                  className="h-12 w-12 p-3"
+                />
+              </a>
+              <ReactDiffViewer
+                oldValue={diff.oldFile.content}
+                newValue={diff.newFile.content}
+                splitView={false}
+                leftTitle={diff.newFile.path}
+                renderContent={syntaxHighlight(diff.newFile.language)}
+              />
+            </div>
+          );
+        })}
+    </div>
+    /*<div className="flex flex-col items-center justify-center min-h-screen py-2">
       <Head>
         <title>Create Next App!</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      {diffs.map((diff, index) => {
-        return (
-          <ReactDiffViewer
-            key={index}
-            oldValue={diff.oldFileContent}
-            newValue={diff.newFileContent}
-            splitView={false}
-            leftTitle="webpack.config.js master@2178133 - pushed 2 hours ago."
-            rightTitle="webpack.config.js master@64207ee - pushed 13 hours ago."
-            renderContent={syntaxHighlight}
-          />
-        );
-      })}
-      <ReactDiffViewer
-        oldValue={oldCode}
-        newValue={newCode}
-        splitView={false}
-        leftTitle="webpack.config.js master@2178133 - pushed 2 hours ago."
-        rightTitle="webpack.config.js master@64207ee - pushed 13 hours ago."
-        renderContent={syntaxHighlight}
-      />
-
-      <ReactDiffViewer
-        oldValue={oldCode}
-        newValue={newCode}
-        splitView={false}
-        leftTitle="webpack.config.js master@2178133 - pushed 2 hours ago."
-        rightTitle="webpack.config.js master@64207ee - pushed 13 hours ago."
-        renderContent={syntaxHighlight}
-      />
-
-      <main className="flex flex-col items-center justify-center w-full flex-1 px-20 text-center">
-        <h1 className="text-6xl font-bold">
+      <main className="flex flex-col items-center justify-center w-full flex-1 px-20">
+        <h1 className="text-6xl font-bold text-center">
           Welcome to{" "}
           <a className="text-blue-600" href="https://nextjs.org">
             Next.js!
           </a>
         </h1>
-        <p className="mt-3 text-2xl">
+        <p className="mt-3 text-2xl text-center">
           Get started by editing{" "}
           <code className="p-3 font-mono text-lg bg-gray-100 rounded-md">
             pages/index.js
           </code>
         </p>
-
+        {diffs
+          .filter((diff) => diff.numDiffLines < 100)
+          .map((diff, index) => {
+            return (
+              <div key={index} className="overflow-x-scroll max-w-lg bg-gray-100">
+                <p>hello world</p>
+                <ReactDiffViewer
+                  oldValue={diff.oldFile.content}
+                  newValue={diff.newFile.content}
+                  splitView={false}
+                  leftTitle={diff.newFile.name}
+                  renderContent={syntaxHighlight(diff.newFile.language)}
+                />
+              </div>
+            );
+          })}
         <div className="flex flex-wrap items-center justify-around max-w-4xl mt-6 sm:w-full">
           <a
             href="https://nextjs.org/docs"
@@ -150,7 +167,7 @@ const Post: React.FC<Props> = function ({ diffs }) {
           <img src="/vercel.svg" alt="Vercel Logo" className="h-4 ml-2" />
         </a>
       </footer>
-    </div>
+    </div>*/
   );
 };
 

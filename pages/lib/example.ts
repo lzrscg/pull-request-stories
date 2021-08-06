@@ -1,7 +1,8 @@
+import { IFile } from "./file";
 import PrsToolkit from "./prs-toolkit";
 
 export default async function test(): Promise<
-  { newFileContent: string; oldFileContent: string }[]
+  { newFile: IFile; oldFile: IFile; numDiffLines: number }[]
 > {
   // Making a pull request story template from the first pull request returned by GitHub
   const toolkit = new PrsToolkit();
@@ -11,12 +12,13 @@ export default async function test(): Promise<
 
   return await Promise.all(
     diffs.map(async (diff) => {
-      const newFileContent = await diff.newFileContent;
-      const oldFileContent = await diff.oldFileContent;
+      const newFile = await diff.getNewFile();
+      const oldFile = await diff.getOldFile();
 
       return {
-        newFileContent,
-        oldFileContent,
+        newFile: newFile.toJSON(),
+        oldFile: oldFile.toJSON(),
+        numDiffLines: diff.numDiffLines,
       };
     })
   );

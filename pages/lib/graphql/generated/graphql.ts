@@ -32049,6 +32049,8 @@ export const GetPullRequestDiffs = gql`
       files(first: 100) {
         nodes {
           path
+          additions
+          deletions
         }
       }
     }
@@ -32089,7 +32091,7 @@ export type GetPullRequestDiffsQueryVariables = Exact<{
 }>;
 
 
-export type GetPullRequestDiffsQuery = { __typename?: 'Query', repository?: Maybe<{ __typename?: 'Repository', pullRequest?: Maybe<{ __typename?: 'PullRequest', baseRefOid: any, headRefOid: any, files?: Maybe<{ __typename?: 'PullRequestChangedFileConnection', nodes?: Maybe<Array<Maybe<{ __typename?: 'PullRequestChangedFile', path: string }>>> }> }> }> };
+export type GetPullRequestDiffsQuery = { __typename?: 'Query', repository?: Maybe<{ __typename?: 'Repository', pullRequest?: Maybe<{ __typename?: 'PullRequest', baseRefOid: any, headRefOid: any, files?: Maybe<{ __typename?: 'PullRequestChangedFileConnection', nodes?: Maybe<Array<Maybe<{ __typename?: 'PullRequestChangedFile', path: string, additions: number, deletions: number }>>> }> }> }> };
 
 export type ListAuthenticatedUsersPullRequestsQueryVariables = Exact<{ [key: string]: never; }>;
 

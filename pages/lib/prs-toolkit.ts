@@ -1,4 +1,4 @@
-import { Diff } from "./diff";
+import { GitHubDiff } from "./diff";
 import { githubClient } from "./graphql/client";
 import {
   GetPullRequestDiffs,
@@ -90,7 +90,7 @@ export default class PrsToolkit {
         path,
       };
 
-      return new Diff(oldFileMetadata, newFileMetadata, numDiffLines);
+      return new GitHubDiff(oldFileMetadata, newFileMetadata, numDiffLines);
     });
   }
 }

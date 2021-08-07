@@ -1,3 +1,5 @@
+import { sha256 } from 'js-sha256';
+
 export type FileMetadata = {
   refOid: string;
   path: string;
@@ -47,7 +49,6 @@ export default class File implements IFile {
 
   get url(): string {
     const { repositoryOwner, repositoryName, refOid, path } = this._metadata;
-
     return `https://github.com/${repositoryOwner}/${repositoryName}/blob/${refOid}/${path}`;
   }
 

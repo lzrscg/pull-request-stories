@@ -6,7 +6,7 @@ import {
   GetFileContentQueryVariables,
 } from "./graphql/generated/graphql";
 
-export class Diff {
+export class GitHubDiff {
   constructor(
     private _oldFileMetadata: FileMetadata,
     private _newFileMetadata: FileMetadata,
@@ -55,6 +55,25 @@ export class Diff {
     const file = new File(content, this._newFileMetadata);
 
     return file;
+  }
+
+  public async getUrl(): Promise<string> {
+    const { repositoryOwner, repositoryName, path } = this._newFileMetadata;
+    const newFileRefOid = this._newFileMetadata.refOid;
+    const oldFileRefOid = this._oldFileMetadata.refOid;
+
+    const { createHash } = await import("crypto");
+    const diffAnchor = createHash("sha256").update(path, "utf8").digest('hex');
+    /*const encoder = new TextEncoder();
+    const utf8EncodedPath = encoder.encode(path);
+    const diffAnchor = await window.crypto.subtle.digest(
+      "SHA-256",
+      utf8EncodedPath
+    );*/
+
+    const url = `https://github.com/${repositoryOwner}/${repositoryName}/compare/${oldFileRefOid}...${newFileRefOid}#diff-${diffAnchor}`;
+
+    return url;
   }
 
   get numDiffLines(): number {

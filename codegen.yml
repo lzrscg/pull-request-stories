@@ -1,9 +1,9 @@
 overwrite: true
-schema: "pages/lib/graphql/generated/github-schema-loader.js"
+schema: "graphql/generated/github-schema-loader.js"
 documents:
-  - pages/lib/graphql/queries/*.graphql
+  - graphql/queries/*.graphql
 generates:
-  pages/lib/graphql/generated/graphql.ts:
+  graphql/generated/graphql.ts:
     plugins:
       - "typescript"
       - "typescript-resolvers"

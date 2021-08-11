@@ -1,8 +1,8 @@
 import Head from "next/head";
 
-import DiffViewer from "../components/diff-viewer";
-import test from "./lib/example";
-import File from "./lib/file";
+import PullRequestStory from "../components/pull-request-story";
+import { IPullRequestDiff } from "../interfaces/pull-request-diff.interface";
+import test from "../lib/example";
 
 const fakeText = ` Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse suscipit diam nec nisi egestas, eu varius dui consequat. Suspendisse non tristique enim, eget pellentesque augue. Nullam ornare sed erat eget feugiat. Sed eu nunc ultrices, dignissim nisi sit amet, convallis purus. Cras ullamcorper consequat molestie. Ut sit amet aliquam risus, quis molestie massa. Phasellus rutrum, risus sit amet ornare lobortis, odio sapien tempor enim, ut fermentum nisl ex ut arcu. Integer sed mi non nulla mollis placerat vitae quis lacus. Praesent odio felis, maximus aliquet diam at, bibendum dictum dolor. Fusce lacinia feugiat vehicula. Donec ullamcorper a eros vel ultricies. Quisque tincidunt nec est laoreet finibus. In quis sollicitudin quam.
 
@@ -21,15 +21,18 @@ export async function getStaticProps() {
 }
 
 type Props = {
-  diffs: {
-    newFile: File;
-    oldFile: File;
-    numDiffLines: number;
-    url: string;
-  }[];
+  diffs: IPullRequestDiff[];
 };
 
 const Post: React.FC<Props> = function ({ diffs }) {
+  const sections = diffs.map((diff) => {
+    return {
+      heading: `About ${diff.path}`,
+      commentary: fakeText,
+      diff,
+    };
+  });
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-2">
       <Head>
@@ -42,17 +45,7 @@ const Post: React.FC<Props> = function ({ diffs }) {
         </h1>
         <p className="mt-3 text-2xl text-center">By LZRS</p>
         <div className="max-w-4xl">
-          {diffs
-            .filter((diff) => diff.numDiffLines < 100)
-            .map((diff) => {
-              return (
-                <div key={diff.newFile.path} className="pb-10">
-                  <h2 className="text-4xl">About {diff.newFile.path}</h2>
-                  <DiffViewer diff={diff} />
-                  <p>{fakeText}</p>
-                </div>
-              );
-            })}
+          <PullRequestStory sections={sections} />
         </div>
       </main>
     </div>

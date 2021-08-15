@@ -2,4 +2,5 @@ node_modules
 .next
 public
 package-lock.json
-pages/lib/graphql/generated/graphql.ts
+graphql/generated/graphql.ts
+amplify

@@ -1,3 +1,5 @@
+import * as P from "prismjs";
+import * as loadLanguages from "prismjs/components/";
 import { useEffect, useState } from "react";
 import ReactDiffViewer from "react-diff-viewer";
 
@@ -5,21 +7,18 @@ import { PullRequestDiff } from "../classes/pull-request-diff";
 import { IPullRequestDiff } from "../interfaces/pull-request-diff.interface";
 import { getLanguageFromFilePath } from "../lib/utils";
 
-const P = require("prismjs");
-const loadLanguages = require("prismjs/components/");
-
 const syntaxHighlight = (language: string | null): any => {
-  return (str: string) => {
+  const HighlightedCode = (str: string) => {
     if (!str) return;
 
     try {
-      loadLanguages([language]);
+      (loadLanguages as any)([language]);
     } catch {
       console.log(language, "module not found");
       return str;
     }
 
-    const languageNotSupported = P.languages[language] === undefined;
+    const languageNotSupported = P.languages[String(language)] === undefined;
     if (languageNotSupported) {
       console.log(language, "not supported");
       return str;
@@ -30,9 +29,14 @@ const syntaxHighlight = (language: string | null): any => {
       return str;
     }
 
-    const highlightedSyntaxHTML = P.highlight(str, P.languages[language]);
+    const highlightedSyntaxHTML = P.highlight(
+      str,
+      P.languages[language],
+      language
+    );
     return <span dangerouslySetInnerHTML={{ __html: highlightedSyntaxHTML }} />;
   };
+  return HighlightedCode;
 };
 
 type Props = {

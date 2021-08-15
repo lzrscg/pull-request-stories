@@ -60,7 +60,7 @@ const PullRequestDiffViewer: React.FC<Props> = function ({ diff }) {
     pullRequestDiff.getUrl().then((url) => setUrl(url));
   });
 
-  if (!newFileContent || !oldFileContent) {
+  if (newFileContent === null || oldFileContent === null) {
     return (
       <div className="leading-8 bg-gray-50 p-2 rounded">
         Loading diff inline...{" "}
@@ -72,9 +72,7 @@ const PullRequestDiffViewer: React.FC<Props> = function ({ diff }) {
   return (
     <div className="w-full p-5">
       <div className="leading-8 bg-gray-50 p-2 underline rounded-t">
-        <pre>
-          <a ref={url}>{diff.path}</a>
-        </pre>
+        <pre>{url ? <a href={url}>{diff.path}</a> : diff.path}</pre>
       </div>
       <div className="relative overflow-x-scroll">
         <ReactDiffViewer

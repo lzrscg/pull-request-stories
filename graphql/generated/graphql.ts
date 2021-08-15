@@ -32029,17 +32029,6 @@ export type Resolvers<ContextType = any> = {
 
 
 
-export const GetFileContent = gql`
-    query GetFileContent($repositoryName: String!, $repositoryOwner: String!, $refOidColonFilePath: String!) {
-  repository(name: $repositoryName, owner: $repositoryOwner) {
-    object(expression: $refOidColonFilePath) {
-      ... on Blob {
-        text
-      }
-    }
-  }
-}
-    `;
 export const GetPullRequestDiffs = gql`
     query GetPullRequestDiffs($repositoryName: String!, $repositoryOwner: String!, $pullRequestNumber: Int!) {
   repository(name: $repositoryName, owner: $repositoryOwner) {
@@ -32075,15 +32064,6 @@ export const ListAuthenticatedUsersPullRequests = gql`
   }
 }
     `;
-export type GetFileContentQueryVariables = Exact<{
-  repositoryName: Scalars['String'];
-  repositoryOwner: Scalars['String'];
-  refOidColonFilePath: Scalars['String'];
-}>;
-
-
-export type GetFileContentQuery = { __typename?: 'Query', repository?: Maybe<{ __typename?: 'Repository', object?: Maybe<{ __typename?: 'Blob', text?: Maybe<string> } | { __typename?: 'Commit' } | { __typename?: 'Tag' } | { __typename?: 'Tree' }> }> };
-
 export type GetPullRequestDiffsQueryVariables = Exact<{
   repositoryName: Scalars['String'];
   repositoryOwner: Scalars['String'];

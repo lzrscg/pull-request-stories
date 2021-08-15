@@ -1,9 +1,3 @@
-import { githubClient } from "../graphql/client";
-import {
-  GetFileContent,
-  GetFileContentQuery,
-  GetFileContentQueryVariables,
-} from "../graphql/generated/graphql";
 import { IPullRequestDiff } from "../interfaces/pull-request-diff.interface";
 
 export class PullRequestDiff implements IPullRequestDiff {
@@ -31,42 +25,48 @@ export class PullRequestDiff implements IPullRequestDiff {
    * @returns
    */
   private async _getFileContent(
-    variables: GetFileContentQueryVariables
+    repositoryOwner: string,
+    repositoryName: string,
+    refOid: string,
+    path: string
   ): Promise<string> {
-    const response = await githubClient().query<
-      GetFileContentQuery,
-      GetFileContentQueryVariables
-    >({
-      query: GetFileContent,
-      variables,
-    });
-    if (response.errors) {
-      throw new Error("GetFileContent Query Failed");
+    const response = await fetch(
+      `https://raw.githubusercontent.com/${repositoryName}/${repositoryOwner}/${refOid}/${path}`
+    );
+
+    if (response.status === 404) {
+      return "";
     }
 
-    // GraphQL code-gen typing is unreliable for this case
-    const blob = (response.data.repository?.object ?? {}) as any;
-    return blob["text"] ?? "";
+    if (response.status !== 200) {
+      throw new Error(`Could not fetch ${refOid}/${path}`);
+    }
+
+    const content = response.text();
+
+    return content;
   }
 
   public getOldFileContent(): Promise<string> {
-    const queryParameters = {
-      refOidColonFilePath: `${this.oldFileRefOid}:${this.path}`,
-      repositoryName: this.repositoryName,
-      repositoryOwner: this.repositoryOwner,
-    };
-    const content = this._getFileContent(queryParameters);
+    const { repositoryName, repositoryOwner, oldFileRefOid, path } = this;
+    const content = this._getFileContent(
+      repositoryName,
+      repositoryOwner,
+      oldFileRefOid,
+      path
+    );
 
     return content;
   }
 
   public getNewFileContent(): Promise<string> {
-    const queryParameters = {
-      refOidColonFilePath: `${this.newFileRefOid}:${this.path}`,
-      repositoryName: this.repositoryName,
-      repositoryOwner: this.repositoryOwner,
-    };
-    const content = this._getFileContent(queryParameters);
+    const { repositoryName, repositoryOwner, newFileRefOid, path } = this;
+    const content = this._getFileContent(
+      repositoryName,
+      repositoryOwner,
+      newFileRefOid,
+      path
+    );
 
     return content;
   }

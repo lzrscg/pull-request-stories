@@ -3,4 +3,3 @@ node_modules
 public
 package-lock.json
 graphql/generated/graphql.ts
-amplify

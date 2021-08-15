@@ -1,9 +1,0 @@
-query GetFileContent($repositoryName:String!, $repositoryOwner: String!, $refOidColonFilePath: String!) {
-  repository(name: $repositoryName, owner: $repositoryOwner) {
-    object(expression: $refOidColonFilePath) {
-      ... on Blob {
-        text
-      }
-    }
-  }
-}

@@ -71,7 +71,7 @@ const PullRequestDiffViewer: React.FC<Props> = function ({ diff }) {
 
   return (
     <div className="w-full p-5">
-      <div className="leading-8 bg-gray-50 p-2 underline rounded-t">
+      <div className="leading-8 bg-gray-50 p-2 underline rounded-t overflow-x-scroll">
         <pre>{url ? <a href={url}>{diff.path}</a> : diff.path}</pre>
       </div>
       <div className="relative overflow-x-scroll">

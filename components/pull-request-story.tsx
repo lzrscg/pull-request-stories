@@ -17,11 +17,15 @@ const PullRequestStory: React.FC<Props> = function ({ sections }) {
         .map((section) => {
           const { heading, commentary, diff } = section;
           return (
-            <div key={diff.path} className="pb-10">
-              <h2>{heading}</h2>
+            <section key={diff.path} className="pb-10">
+              <span className="prose">
+                <h2>{heading}</h2>
+              </span>
               <PullRequestDiffViewer diff={diff} />
-              <p>{commentary}</p>
-            </div>
+              <span className="prose">
+                <p>{commentary}</p>
+              </span>
+            </section>
           );
         })}
     </div>

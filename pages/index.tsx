@@ -1,3 +1,4 @@
+import Head from "next/head";
 import Link from "next/link";
 
 import PullRequestStory from "../components/pull-request-story";
@@ -33,10 +34,17 @@ const Post: React.FC<Props> = function ({ diffs }) {
     };
   });
 
-  const headerNavLinks = ["Mission", "Sign In"];
+  const headerNavLinks = ["Mission", "Waitlist"];
 
   return (
-    <div className="max-w-3xl px-4 mx-auto sm:px-6 xl:max-w-5xl xl:px-0">
+    <div className="antialiased max-w-3xl px-4 mx-auto sm:px-6 xl:max-w-5xl xl:px-0">
+      <Head>
+        <title>My First Pull Request - Pull Request Stories</title>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+          rel="stylesheet"
+        />
+      </Head>
       <div className="flex flex-col justify-between h-screen">
         <header className="flex items-center justify-between py-10">
           <div>
@@ -86,7 +94,7 @@ const Post: React.FC<Props> = function ({ diffs }) {
                   <dd>By LZRS</dd>
                 </dl>
                 <div className="divide-y divide-gray-200 xl:pb-0 xl:col-span-3 xl:row-span-2">
-                  <div className="pt-10 pb-8 prose max-w-none">
+                  <div className="pt-10 pb-8 max-w-none">
                     <PullRequestStory sections={sections} />
                   </div>
                 </div>

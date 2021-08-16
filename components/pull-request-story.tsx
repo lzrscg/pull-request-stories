@@ -18,7 +18,7 @@ const PullRequestStory: React.FC<Props> = function ({ sections }) {
           const { heading, commentary, diff } = section;
           return (
             <div key={diff.path} className="pb-10">
-              <h2 className="text-4xl">{heading}</h2>
+              <h2>{heading}</h2>
               <PullRequestDiffViewer diff={diff} />
               <p>{commentary}</p>
             </div>

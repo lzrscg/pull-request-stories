@@ -1,4 +1,4 @@
-import Head from "next/head";
+import Link from "next/link";
 
 import PullRequestStory from "../components/pull-request-story";
 import { IPullRequestDiff } from "../interfaces/pull-request-diff.interface";
@@ -33,21 +33,68 @@ const Post: React.FC<Props> = function ({ diffs }) {
     };
   });
 
+  const headerNavLinks = ["Mission", "Sign In"];
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-2">
-      <Head>
-        <title>My First Pull Request - Pull Request Stories</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <main className="flex flex-col items-center justify-center w-full flex-1 px-20">
-        <h1 className="text-6xl font-bold text-center">
-          My First Pull Request
-        </h1>
-        <p className="mt-3 text-2xl text-center">By LZRS</p>
-        <div className="max-w-4xl">
-          <PullRequestStory sections={sections} />
-        </div>
-      </main>
+    <div className="max-w-3xl px-4 mx-auto sm:px-6 xl:max-w-5xl xl:px-0">
+      <div className="flex flex-col justify-between h-screen">
+        <header className="flex items-center justify-between py-10">
+          <div>
+            <Link href="/">
+              <div className="flex items-center justify-between">
+                <div className="hidden h-6 text-2xl font-semibold sm:block">
+                  Pull Request Stories
+                </div>
+              </div>
+            </Link>
+          </div>
+          <div className="flex items-center text-base leading-5">
+            <div className="hidden sm:block">
+              {headerNavLinks.map((link) => (
+                <Link key={link} href={`/${link}`}>
+                  <a className="p-1 font-medium text-gray-900 sm:p-4">{link}</a>
+                </Link>
+              ))}
+            </div>
+            {/*<MobileNav />*/}
+          </div>
+        </header>
+        <main className="mb-auto">
+          <article>
+            <div className="xl:divide-y xl:divide-gray-200">
+              <header className="pt-6 xl:pb-6">
+                <div className="space-y-1 text-center">
+                  <dl className="space-y-10">
+                    <div>
+                      <dd className="text-base font-medium leading-6 text-gray-500">
+                        <time>January 1, 2021</time>
+                      </dd>
+                    </div>
+                  </dl>
+                  <div>
+                    <h1 className="text-3xl font-extrabold leading-9 tracking-tight text-gray-900sm:text-4xl sm:leading-10 md:text-5xl md:leading-14">
+                      My First Pull Request
+                    </h1>
+                  </div>
+                </div>
+              </header>
+              <div
+                className="pb-8 divide-y divide-gray-200 xl:divide-y-0 xl:grid xl:grid-cols-4 xl:gap-x-6"
+                style={{ gridTemplateRows: "auto 1fr" }}
+              >
+                <dl className="pt-6 pb-10 xl:pt-11 xl:border-b xl:border-gray-200">
+                  <dd>By LZRS</dd>
+                </dl>
+                <div className="divide-y divide-gray-200 xl:pb-0 xl:col-span-3 xl:row-span-2">
+                  <div className="pt-10 pb-8 prose max-w-none">
+                    <PullRequestStory sections={sections} />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+        </main>
+      </div>
     </div>
   );
 };

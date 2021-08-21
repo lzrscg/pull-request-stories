@@ -56,3 +56,11 @@ amplify-gradle-config.json
 amplifytools.xcconfig
 .secret-*
 #amplify-do-not-edit-end
+
+# https://docs.amplify.aws/cli/teams/shared#sharing-projects-within-the-team
+amplify/team-provider-info.json
+
+# CDK and Serverless
+cdk-exports.json
+.serverless
+.serverless_nextjs

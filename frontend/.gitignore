@@ -55,3 +55,8 @@ amplifytools.xcconfig
 
 # https://docs.amplify.aws/cli/teams/shared#sharing-projects-within-the-team
 amplify/team-provider-info.json
+
+# CDK and Serverless
+cdk-exports.json
+.serverless
+.serverless_nextjs

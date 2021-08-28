@@ -3,10 +3,38 @@ import * as cognito from '@aws-cdk/aws-cognito'
 import * as appsync from '@aws-cdk/aws-appsync'
 import * as ddb from '@aws-cdk/aws-dynamodb'
 import * as lambda from '@aws-cdk/aws-lambda'
+import * as route53 from '@aws-cdk/aws-route53'
+import * as acm from '@aws-cdk/aws-certificatemanager';
+
+require('dotenv').config()
 
 export class PrsBackendStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props)
+
+    const domainName = process.env.DOMAIN_NAME;
+
+    if(!domainName) {
+      console.error(`A domain needs to be configured with Route 53. Please create a public hosted zone.
+      
+      Instructions via console: 
+      https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingHostedZone.html
+
+      Sample CDK:
+      const hostedZone = new route53.PublicHostedZone(this, 'HostedZone', {
+        zoneName: domainName
+      });
+      `);
+      throw new Error('No DOMAIN_NAME environment variable found. See .env.example');
+    }
+
+    const hostedZone = route53.PublicHostedZone.fromLookup(this, 'HostedZone', { domainName });
+
+    const certificate = new acm.DnsValidatedCertificate(this, 'CrossRegionCertificate', {
+      domainName: `*.${domainName}`,
+      hostedZone: hostedZone,
+      region: 'us-east-1',
+    });
 
     const userPool = new cognito.UserPool(this, 'cdk-blog-user-pool', {
       selfSignUpEnabled: true,
@@ -131,6 +159,18 @@ export class PrsBackendStack extends cdk.Stack {
 
     new cdk.CfnOutput(this, "UserPoolClientId", {
       value: userPoolClient.userPoolClientId
+    })
+
+    new cdk.CfnOutput(this, "HostedZoneName", {
+      value: hostedZone.zoneName
+    })
+
+    new cdk.CfnOutput(this, "HostedZoneId", {
+      value: hostedZone.hostedZoneId
+    })
+
+    new cdk.CfnOutput(this, "CertificateArn", {
+      value: certificate.certificateArn
     })
   }
 }

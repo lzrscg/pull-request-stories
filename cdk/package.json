@@ -25,7 +25,10 @@
     "@aws-cdk/aws-cognito": "^1.119.0",
     "@aws-cdk/aws-dynamodb": "^1.119.0",
     "@aws-cdk/aws-lambda": "^1.119.0",
+    "@aws-cdk/aws-route53": "^1.119.0",
     "@aws-cdk/core": "1.119.0",
+    "cdk-user-pool-identity-provider-github": "^0.0.5",
+    "dotenv": "^10.0.0",
     "source-map-support": "^0.5.16"
   }
 }

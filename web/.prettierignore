@@ -3,3 +3,7 @@ node_modules
 public
 package-lock.json
 graphql/generated/graphql.ts
+aws-exports.js
+cdk-exports.js
+.serverless
+.serverless_nextjs

@@ -5,6 +5,7 @@ import * as ddb from '@aws-cdk/aws-dynamodb'
 import * as lambda from '@aws-cdk/aws-lambda'
 import * as route53 from '@aws-cdk/aws-route53'
 import * as acm from '@aws-cdk/aws-certificatemanager';
+import { NextJSLambdaEdge } from "@sls-next/cdk-construct";
 
 require('dotenv').config()
 
@@ -34,6 +35,15 @@ export class PrsBackendStack extends cdk.Stack {
       domainName: `*.${domainName}`,
       hostedZone: hostedZone,
       region: 'us-east-1',
+    });
+
+    new NextJSLambdaEdge(this, "NextJsApp", {
+      serverlessBuildOutDir: "../../web/.serverless_nextjs",
+      domain: {
+        domainNames: [domainName],
+        hostedZone,
+        certificate,
+      }
     });
 
     const userPool = new cognito.UserPool(this, 'cdk-blog-user-pool', {

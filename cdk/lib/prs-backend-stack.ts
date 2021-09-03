@@ -4,8 +4,9 @@ import * as appsync from '@aws-cdk/aws-appsync'
 import * as ddb from '@aws-cdk/aws-dynamodb'
 import * as lambda from '@aws-cdk/aws-lambda'
 import * as route53 from '@aws-cdk/aws-route53'
+import * as route53targets from '@aws-cdk/aws-route53-targets'
 import * as acm from '@aws-cdk/aws-certificatemanager';
-import { NextJSLambdaEdge } from "@sls-next/cdk-construct";
+import { UserPoolIdentityProviderGithub } from '../vendor/github.com/lzrscg/cdk-user-pool-identity-provider-github'
 
 require('dotenv').config()
 
@@ -14,6 +15,8 @@ export class PrsBackendStack extends cdk.Stack {
     super(scope, id, props)
 
     const domainName = process.env.DOMAIN_NAME;
+    const githubClientId = process.env.GITHUB_CLIENT_ID;
+    const githubClientSecret = process.env.GITHUB_CLIENT_SECRET;
 
     if(!domainName) {
       console.error(`A domain needs to be configured with Route 53. Please create a public hosted zone.
@@ -29,6 +32,14 @@ export class PrsBackendStack extends cdk.Stack {
       throw new Error('No DOMAIN_NAME environment variable found. See .env.example');
     }
 
+    if(!githubClientId) {
+      throw new Error('No GITHUB_CLIENT_ID environment variable found. See .env.example');
+    }
+
+    if(!githubClientSecret) {
+      throw new Error('No GITHUB_CLIENT_SECRET environment variable found. See .env.example');
+    }
+
     const hostedZone = route53.PublicHostedZone.fromLookup(this, 'HostedZone', { domainName });
 
     const certificate = new acm.DnsValidatedCertificate(this, 'CrossRegionCertificate', {
@@ -37,35 +48,52 @@ export class PrsBackendStack extends cdk.Stack {
       region: 'us-east-1',
     });
 
-    new NextJSLambdaEdge(this, "NextJsApp", {
-      serverlessBuildOutDir: "../../web/.serverless_nextjs",
-      domain: {
-        domainNames: [domainName],
-        hostedZone,
-        certificate,
-      }
+    const userPool = new cognito.UserPool(this, 'PrsUserPool', {
+      selfSignUpEnabled: true,
+      customAttributes: {
+        gitHubAccessToken: new cognito.StringAttribute({ mutable: true }),
+      },
+
     });
 
-    const userPool = new cognito.UserPool(this, 'cdk-blog-user-pool', {
-      selfSignUpEnabled: true,
-      accountRecovery: cognito.AccountRecovery.PHONE_AND_EMAIL,
-      userVerification: {
-        emailStyle: cognito.VerificationEmailStyle.CODE
+    const userPoolDomainName = `auth.${domainName}`;
+
+    const userPoolDomain = new cognito.UserPoolDomain(this, 'UserPoolDomain', {
+      userPool,
+      customDomain: {
+        domainName: userPoolDomainName,
+        certificate,
       },
-      autoVerify: {
-        email: true
-      },
-      standardAttributes: {
-        email: {
-          required: true,
-          mutable: true
-        }
-      }
+    });
+
+    const userPoolDomainTarget = new route53targets.UserPoolDomainTarget(userPoolDomain);
+
+    new route53.ARecord(this, 'UserPoolAliasRecord', {
+      zone: hostedZone,
+      recordName: userPoolDomainName,
+      target: route53.RecordTarget.fromAlias(userPoolDomainTarget),
+    });
+
+    const userPoolIdentityProviderGithub = new UserPoolIdentityProviderGithub(this, 'UserPoolIdentityProviderGithub', {
+      userPool,
+      clientId: githubClientId,
+      clientSecret: githubClientSecret,
+      cognitoHostedUiDomain: userPoolDomainName,
+      gitUrl: 'https://github.com/lzrscg/github-cognito-openid-wrapper',
+      gitBranch: 'v1.2.2',
     });
 
     const userPoolClient = new cognito.UserPoolClient(this, "UserPoolClient", {
-      userPool
+      userPool,
+      /*oAuth: {
+        callbackUrls,
+        logoutUrls,
+      },*/
+      supportedIdentityProviders: [
+        cognito.UserPoolClientIdentityProvider.custom('Github')
+      ],
     });
+    userPoolClient.node.addDependency(userPoolIdentityProviderGithub);
 
     const api = new appsync.GraphqlApi(this, 'cdk-blog-app', {
       name: "cdk-blog-app",

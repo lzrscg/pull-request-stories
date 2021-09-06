@@ -1,11 +1,11 @@
-import BackendStack from "./cdk-exports.json";
+import cdkExports from "./cdk-exports.json";
 
 const config = {
-  aws_project_region: BackendStack.ProjectRegion,
-  aws_user_pools_id: BackendStack.UserPoolId,
-  aws_user_pools_web_client_id: BackendStack.UserPoolClientId,
-  aws_appsync_graphqlEndpoint: BackendStack.GraphQLAPIURL,
-  aws_appsync_apiKey: BackendStack.AppSyncAPIKey,
+  aws_project_region: cdkExports.PrsBackendStack.ProjectRegion,
+  aws_user_pools_id: cdkExports.PrsBackendStack.UserPoolId,
+  aws_user_pools_web_client_id: cdkExports.PrsBackendStack.UserPoolClientId,
+  aws_appsync_graphqlEndpoint: cdkExports.PrsBackendStack.GraphQLAPIURL,
+  aws_appsync_apiKey: cdkExports.PrsBackendStack.AppSyncAPIKey,
   aws_appsync_authenticationType: "API_KEY",
 };
 

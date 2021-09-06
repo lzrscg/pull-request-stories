@@ -51,7 +51,7 @@ export class PrsBackendStack extends cdk.Stack {
     const userPool = new cognito.UserPool(this, 'PrsUserPool', {
       selfSignUpEnabled: true,
       customAttributes: {
-        gitHubAccessToken: new cognito.StringAttribute({ mutable: true }),
+        github_access_token: new cognito.StringAttribute({ mutable: true }),
       },
 
     });
@@ -78,17 +78,17 @@ export class PrsBackendStack extends cdk.Stack {
       userPool,
       clientId: githubClientId,
       clientSecret: githubClientSecret,
-      cognitoHostedUiDomain: userPoolDomainName,
+      cognitoHostedUiDomain: `https://${userPoolDomainName}`,
       gitUrl: 'https://github.com/lzrscg/github-cognito-openid-wrapper',
-      gitBranch: 'v1.2.2',
+      gitBranch: 'v1.2.3',
     });
 
     const userPoolClient = new cognito.UserPoolClient(this, "UserPoolClient", {
       userPool,
-      /*oAuth: {
-        callbackUrls,
-        logoutUrls,
-      },*/
+      oAuth: {
+        callbackUrls: [`https://${domainName}`],
+        logoutUrls: [`https://${domainName}`],
+      },
       supportedIdentityProviders: [
         cognito.UserPoolClientIdentityProvider.custom('Github')
       ],

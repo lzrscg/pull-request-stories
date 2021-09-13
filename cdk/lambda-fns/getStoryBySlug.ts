@@ -1,10 +1,10 @@
 const AWS = require('aws-sdk');
 const docClient = new AWS.DynamoDB.DocumentClient();
 
-async function getPostById(postId: string) {
+async function getStoryBySlug(storySlug: string) {
     const params = {
-        TableName: process.env.POST_TABLE,
-        Key: { id: postId }
+        TableName: process.env.TABLE,
+        Key: { slug: storySlug }
     }
     try {
         const { Item } = await docClient.get(params).promise()
@@ -14,4 +14,4 @@ async function getPostById(postId: string) {
     }
 }
 
-export default getPostById
+export default getStoryBySlug

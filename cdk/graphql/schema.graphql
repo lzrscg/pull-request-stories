@@ -1,41 +1,44 @@
-type Post @aws_api_key @aws_cognito_user_pools {
-  id: ID!
+type Story @aws_api_key @aws_cognito_user_pools {
+  slug: String!
   title: String!
+  pullRequestPath: String
   content: String!
   owner: String!
 }
 
-input PostInput {
-  id: ID
+input StoryInput {
+  slug: String!
   title: String!
+  pullRequestPath: String
   content: String!
 }
 
-input UpdatePostInput {
-  id: ID!
+input UpdateStoryInput {
+  slug: String!
   title: String
+  pullRequestPath: String
   content: String
 }
 
 type Query {
-  getPostById(postId: ID!): Post
+  getStoryBySlug(storySlug: String!): Story
     @aws_api_key @aws_cognito_user_pools
-  listPosts: [Post]
+  listStories: [Story]
     @aws_api_key @aws_cognito_user_pools
-  postsByUsername: [Post]
+  storiesByUsername: [Story]
     @aws_cognito_user_pools
 }
 
 type Mutation {
-  createPost(post: PostInput!): Post
+  createStory(story: StoryInput!): Story
     @aws_cognito_user_pools
-  deletePost(postId: ID!): ID
+  deleteStory(storySlug: String!): String
     @aws_cognito_user_pools
-  updatePost(post: UpdatePostInput!): Post
+  updateStory(story: UpdateStoryInput!): Story
     @aws_cognito_user_pools
 }
 
 type Subscription {
-  onCreatePost: Post
-    @aws_subscribe(mutations: ["createPost"])
+  onCreateStory: Story
+    @aws_subscribe(mutations: ["createStory"])
 }

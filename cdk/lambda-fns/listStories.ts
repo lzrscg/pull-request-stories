@@ -2,9 +2,9 @@
 const AWS = require('aws-sdk')
 const docClient = new AWS.DynamoDB.DocumentClient()
 
-async function listPosts() {
+async function listStories() {
     const params = {
-        TableName: process.env.POST_TABLE,
+        TableName: process.env.TABLE,
     }
     try {
         const data = await docClient.scan(params).promise()
@@ -15,4 +15,4 @@ async function listPosts() {
     }
 }
 
-export default listPosts
+export default listStories

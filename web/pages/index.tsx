@@ -14,136 +14,7 @@ Vestibulum accumsan at ante id euismod. Sed ex sem, porta ut ex ac, tincidunt pe
 Donec auctor in est at cursus. Ut nisi nisi, gravida eget sagittis et, aliquam ullamcorper lectus. Duis congue cursus lacinia. Aenean bibendum, justo vitae suscipit iaculis, lorem dui consectetur dolor, eu consectetur lectus orci eu neque. Suspendisse fringilla bibendum venenatis. Sed dictum vel purus nec gravida. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Suspendisse potenti. Suspendisse a rutrum augue. Duis et turpis orci. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Suspendisse lectus justo, cursus vel nibh sed, imperdiet vulputate dolor. Integer a eros metus. Etiam tellus ante, commodo sit amet tempor eget, semper faucibus nibh. Quisque non euismod nulla. `;
 
 export async function getStaticProps() {
-  //const diffs = await test();
-
-  const diffs = [
-    {
-      repositoryOwner: "lzrscg",
-      repositoryName: "git-diff-to-blog-post",
-      pullRequestNumber: 1,
-      path: ".gitignore",
-      oldFileRefOid: "b1beb8bd86a9bd26ff696e1738cee52ae176ce38",
-      newFileRefOid: "9c12aebd4548286848a18547559868acf7d24df3",
-      numDiffLines: 8,
-    },
-    {
-      repositoryOwner: "lzrscg",
-      repositoryName: "git-diff-to-blog-post",
-      pullRequestNumber: 1,
-      path: "codegen.yml",
-      oldFileRefOid: "b1beb8bd86a9bd26ff696e1738cee52ae176ce38",
-      newFileRefOid: "9c12aebd4548286848a18547559868acf7d24df3",
-      numDiffLines: 11,
-    },
-    {
-      repositoryOwner: "lzrscg",
-      repositoryName: "git-diff-to-blog-post",
-      pullRequestNumber: 1,
-      path: "index.js",
-      oldFileRefOid: "b1beb8bd86a9bd26ff696e1738cee52ae176ce38",
-      newFileRefOid: "9c12aebd4548286848a18547559868acf7d24df3",
-      numDiffLines: 18,
-    },
-    {
-      repositoryOwner: "lzrscg",
-      repositoryName: "git-diff-to-blog-post",
-      pullRequestNumber: 1,
-      path: "index.ts",
-      oldFileRefOid: "b1beb8bd86a9bd26ff696e1738cee52ae176ce38",
-      newFileRefOid: "9c12aebd4548286848a18547559868acf7d24df3",
-      numDiffLines: 3,
-    },
-    {
-      repositoryOwner: "lzrscg",
-      repositoryName: "git-diff-to-blog-post",
-      pullRequestNumber: 1,
-      path: "package-lock.json",
-      oldFileRefOid: "b1beb8bd86a9bd26ff696e1738cee52ae176ce38",
-      newFileRefOid: "9c12aebd4548286848a18547559868acf7d24df3",
-      numDiffLines: 5406,
-    },
-    {
-      repositoryOwner: "lzrscg",
-      repositoryName: "git-diff-to-blog-post",
-      pullRequestNumber: 1,
-      path: "package.json",
-      oldFileRefOid: "b1beb8bd86a9bd26ff696e1738cee52ae176ce38",
-      newFileRefOid: "9c12aebd4548286848a18547559868acf7d24df3",
-      numDiffLines: 20,
-    },
-    {
-      repositoryOwner: "lzrscg",
-      repositoryName: "git-diff-to-blog-post",
-      pullRequestNumber: 1,
-      path: "src/lib/example.ts",
-      oldFileRefOid: "b1beb8bd86a9bd26ff696e1738cee52ae176ce38",
-      newFileRefOid: "9c12aebd4548286848a18547559868acf7d24df3",
-      numDiffLines: 26,
-    },
-    {
-      repositoryOwner: "lzrscg",
-      repositoryName: "git-diff-to-blog-post",
-      pullRequestNumber: 1,
-      path: "src/lib/graphql/client.ts",
-      oldFileRefOid: "b1beb8bd86a9bd26ff696e1738cee52ae176ce38",
-      newFileRefOid: "9c12aebd4548286848a18547559868acf7d24df3",
-      numDiffLines: 23,
-    },
-    {
-      repositoryOwner: "lzrscg",
-      repositoryName: "git-diff-to-blog-post",
-      pullRequestNumber: 1,
-      path: "src/lib/graphql/generated/github-schema-loader.js",
-      oldFileRefOid: "b1beb8bd86a9bd26ff696e1738cee52ae176ce38",
-      newFileRefOid: "9c12aebd4548286848a18547559868acf7d24df3",
-      numDiffLines: 2,
-    },
-    {
-      repositoryOwner: "lzrscg",
-      repositoryName: "git-diff-to-blog-post",
-      pullRequestNumber: 1,
-      path: "src/lib/graphql/generated/graphql.ts",
-      oldFileRefOid: "b1beb8bd86a9bd26ff696e1738cee52ae176ce38",
-      newFileRefOid: "9c12aebd4548286848a18547559868acf7d24df3",
-      numDiffLines: 32162,
-    },
-    {
-      repositoryOwner: "lzrscg",
-      repositoryName: "git-diff-to-blog-post",
-      pullRequestNumber: 1,
-      path: "src/lib/graphql/queries/get-file-content.graphql",
-      oldFileRefOid: "b1beb8bd86a9bd26ff696e1738cee52ae176ce38",
-      newFileRefOid: "9c12aebd4548286848a18547559868acf7d24df3",
-      numDiffLines: 9,
-    },
-    {
-      repositoryOwner: "lzrscg",
-      repositoryName: "git-diff-to-blog-post",
-      pullRequestNumber: 1,
-      path: "src/lib/graphql/queries/get-pull-request-diffs.graphql",
-      oldFileRefOid: "b1beb8bd86a9bd26ff696e1738cee52ae176ce38",
-      newFileRefOid: "9c12aebd4548286848a18547559868acf7d24df3",
-      numDiffLines: 14,
-    },
-    {
-      repositoryOwner: "lzrscg",
-      repositoryName: "git-diff-to-blog-post",
-      pullRequestNumber: 1,
-      path: "src/lib/graphql/queries/list-authenticated-users-pull-requests.graphql",
-      oldFileRefOid: "b1beb8bd86a9bd26ff696e1738cee52ae176ce38",
-      newFileRefOid: "9c12aebd4548286848a18547559868acf7d24df3",
-      numDiffLines: 18,
-    },
-    {
-      repositoryOwner: "lzrscg",
-      repositoryName: "git-diff-to-blog-post",
-      pullRequestNumber: 1,
-      path: "src/lib/prs-toolkit.ts",
-      oldFileRefOid: "b1beb8bd86a9bd26ff696e1738cee52ae176ce38",
-      newFileRefOid: "9c12aebd4548286848a18547559868acf7d24df3",
-      numDiffLines: 134,
-    },
-  ];
+  const diffs = test();
 
   return {
     props: {
@@ -165,7 +36,20 @@ const Post: React.FC<Props> = function ({ diffs }) {
     };
   });
 
-  const headerNavLinks = ["Mission", "Waitlist"];
+  type NavLink = {
+    text: string;
+    href: string;
+  };
+  const headerNavLinks: NavLink[] = [
+    {
+      text: "Mission",
+      href: "#",
+    },
+    {
+      text: "Create a Story",
+      href: "/new",
+    },
+  ];
 
   return (
     <div className="antialiased max-w-3xl px-4 mx-auto sm:px-6 xl:max-w-5xl xl:px-0">
@@ -190,8 +74,10 @@ const Post: React.FC<Props> = function ({ diffs }) {
           <div className="flex items-center text-base leading-5">
             <div className="hidden sm:block">
               {headerNavLinks.map((link) => (
-                <Link key={link} href={`/${link}`}>
-                  <a className="p-1 font-medium text-gray-900 sm:p-4">{link}</a>
+                <Link key={link.href} href={link.href}>
+                  <a className="p-1 font-medium text-gray-900 sm:p-4">
+                    {link.text}
+                  </a>
                 </Link>
               ))}
             </div>

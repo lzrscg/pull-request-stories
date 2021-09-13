@@ -38,13 +38,14 @@ function stringFromPathAfterLastOccuranceOfSubstring(
   return lastPartOfPath;
 }
 
-export async function listAuthenticatedUsersPullRequests(): Promise<
-  IPullRequest[]
-> {
-  const response =
-    await githubClient().query<ListAuthenticatedUsersPullRequestsQuery>({
-      query: ListAuthenticatedUsersPullRequests,
-    });
+export async function listAuthenticatedUsersPullRequests(
+  gitHubToken: string
+): Promise<IPullRequest[]> {
+  const response = await githubClient(
+    gitHubToken
+  ).query<ListAuthenticatedUsersPullRequestsQuery>({
+    query: ListAuthenticatedUsersPullRequests,
+  });
   if (response.errors) {
     throw new Error("ListAuthenticatedUsersPullRequests Query Failed");
   }
@@ -71,9 +72,12 @@ export async function listAuthenticatedUsersPullRequests(): Promise<
 }
 
 export async function getPullRequestDiffs(
+  gitHubToken: string,
   variables: GetPullRequestDiffsQueryVariables
 ): Promise<PullRequestDiff[]> {
-  const response = await githubClient().query<GetPullRequestDiffsQuery>({
+  const response = await githubClient(
+    gitHubToken
+  ).query<GetPullRequestDiffsQuery>({
     query: GetPullRequestDiffs,
     variables,
   });

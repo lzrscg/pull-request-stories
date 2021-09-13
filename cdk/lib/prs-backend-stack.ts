@@ -86,8 +86,8 @@ export class PrsBackendStack extends cdk.Stack {
     const userPoolClient = new cognito.UserPoolClient(this, "UserPoolClient", {
       userPool,
       oAuth: {
-        callbackUrls: [`https://${domainName}`],
-        logoutUrls: [`https://${domainName}`],
+        callbackUrls: [`https://${domainName}/new`, `http://localhost:3000/new`],
+        logoutUrls: [`https://${domainName}`, 'http://localhost:3000'],
       },
       supportedIdentityProviders: [
         cognito.UserPoolClientIdentityProvider.custom('Github')
@@ -95,8 +95,8 @@ export class PrsBackendStack extends cdk.Stack {
     });
     userPoolClient.node.addDependency(userPoolIdentityProviderGithub);
 
-    const api = new appsync.GraphqlApi(this, 'cdk-blog-app', {
-      name: "cdk-blog-app",
+    const api = new appsync.GraphqlApi(this, 'PrsApp', {
+      name: "PrsApp",
       logConfig: {
         fieldLogLevel: appsync.FieldLogLevel.ALL,
       },
@@ -129,44 +129,44 @@ export class PrsBackendStack extends cdk.Stack {
 
     lambdaDs.createResolver({
       typeName: "Query",
-      fieldName: "getPostById"
+      fieldName: "getStoryBySlug"
     })
     
     lambdaDs.createResolver({
       typeName: "Query",
-      fieldName: "listPosts"
+      fieldName: "listStories"
     })
 
     lambdaDs.createResolver({
       typeName: "Query",
-      fieldName: "postsByUsername"
+      fieldName: "storiesByUsername"
     })
     
     lambdaDs.createResolver({
       typeName: "Mutation",
-      fieldName: "createPost"
+      fieldName: "createStory"
     })
     
     lambdaDs.createResolver({
       typeName: "Mutation",
-      fieldName: "deletePost"
+      fieldName: "deleteStory"
     })
     
     lambdaDs.createResolver({
       typeName: "Mutation",
-      fieldName: "updatePost"
+      fieldName: "updateStory"
     })
 
-    const postTable = new ddb.Table(this, 'CDKPostTable', {
+    const table = new ddb.Table(this, 'Table', {
       billingMode: ddb.BillingMode.PAY_PER_REQUEST,
       partitionKey: {
-        name: 'id',
+        name: 'slug',
         type: ddb.AttributeType.STRING,
       },
     })
 
-    postTable.addGlobalSecondaryIndex({
-      indexName: "postsByUsername",
+    table.addGlobalSecondaryIndex({
+      indexName: "storiesByUsername",
       partitionKey: {
         name: "owner",
         type: ddb.AttributeType.STRING,
@@ -174,10 +174,10 @@ export class PrsBackendStack extends cdk.Stack {
     })
 
     // enable the Lambda function to access the DynamoDB table (using IAM)
-    postTable.grantFullAccess(postLambda)
+    table.grantFullAccess(postLambda)
     
     // Create an environment variable that we will use in the function code
-    postLambda.addEnvironment('POST_TABLE', postTable.tableName);
+    postLambda.addEnvironment('TABLE', table.tableName);
 
     new cdk.CfnOutput(this, "GraphQLAPIURL", {
       value: api.graphqlUrl

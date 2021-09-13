@@ -1,11 +1,11 @@
 const AWS = require('aws-sdk');
 const docClient = new AWS.DynamoDB.DocumentClient();
 
-async function deletePost(postId: string, username: string) {
+async function deleteStory(storySlug: string, username: string) {
   const params = {
-    TableName: process.env.POST_TABLE,
+    TableName: process.env.TABLE,
     Key: {
-      id: postId
+      slug: storySlug
     },
     ConditionExpression: "#owner = :owner",
     ExpressionAttributeNames: {
@@ -17,11 +17,11 @@ async function deletePost(postId: string, username: string) {
 };
   try {
     await docClient.delete(params).promise()
-    return postId
+    return storySlug
   } catch (err) {
     console.log('DynamoDB error: ', err)
     return null
   }
 }
 
-export default deletePost;
+export default deleteStory;

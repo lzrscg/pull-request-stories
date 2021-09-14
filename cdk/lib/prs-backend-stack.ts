@@ -183,6 +183,10 @@ export class PrsBackendStack extends cdk.Stack {
       value: api.graphqlUrl
     })
 
+    new cdk.CfnOutput(this, "GraphQLAPIId", {
+      value: api.apiId
+    })
+
     new cdk.CfnOutput(this, 'AppSyncAPIKey', {
       value: api.apiKey || ''
     })

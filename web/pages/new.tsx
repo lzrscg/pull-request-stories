@@ -1,4 +1,4 @@
-import { Amplify, Auth } from "aws-amplify";
+import { Amplify, API, Auth } from "aws-amplify";
 import Head from "next/head";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
@@ -8,6 +8,8 @@ import AsyncSelect from "react-select/async";
 import awsconfig from "../aws-exports";
 import Editor from "../components/editor";
 import NewPostControlBar from "../components/new-post-control-bar";
+import { createStory } from "../graphql/app-sync/mutations";
+import { StoryInput } from "../graphql/app-sync-api";
 import { IPullRequest } from "../interfaces/pull-request.interface";
 import {
   getPullRequestDiffs,
@@ -18,8 +20,11 @@ Amplify.configure(awsconfig);
 function NewPost() {
   const [user, setUser] = useState<any>(null);
   const [title, setTitle] = useState<string>("My First Pull Request");
-  const [pullRequest, setPullRequest] = useState<IPullRequest | null>(null);
+  const [pullRequest, setPullRequest] = useState<IPullRequest | undefined>(
+    undefined
+  );
   const [initialEditorContent, setInitialEditorContent] = useState<string>("");
+  const [editorContent, setEditorContent] = useState<string>("");
   const headerNavLinks = ["Mission", "Create a Story"];
 
   type OptionType = { label: string; value: any };
@@ -50,6 +55,14 @@ function NewPost() {
     }
   }
 
+  async function createNewStory(story: StoryInput) {
+    await API.graphql({
+      query: createStory,
+      variables: { story },
+      authMode: "AMAZON_COGNITO_USER_POOLS",
+    });
+  }
+
   function selectOption(selection: OptionType) {
     const { value } = selection;
     const gitHubToken = user.attributes["custom:github_access_token"];
@@ -57,8 +70,7 @@ function NewPost() {
     setPullRequest(value);
 
     getPullRequestDiffs(gitHubToken, value).then((diffs) => {
-      const initialText = `
-        Hi! Thank you for trying out an early version of the story editor. Eventually, there will be many rich-text editing features. However, for now the text must be written in markdown.
+      const initialText = `Hi! Thank you for trying out an early version of the story editor. Eventually, there will be many rich-text editing features. However, for now the text must be written in markdown.
 
       To learn more about markdown, check out this URL: https://guides.github.com/features/mastering-markdown
 
@@ -183,6 +195,8 @@ function NewPost() {
                         <Editor
                           key={initialEditorContent}
                           initialContent={initialEditorContent}
+                          pullRequest={pullRequest}
+                          onChange={(mdx) => setEditorContent(mdx)}
                         />
                       </div>
                     </div>
@@ -194,7 +208,23 @@ function NewPost() {
         </div>
       </div>
       <div className="flex-grow-0 flex-shrink">
-        <NewPostControlBar />
+        <NewPostControlBar
+          onPublish={() =>
+            createNewStory({
+              title,
+              content: editorContent,
+              pullRequestPath: `${pullRequest?.repositoryOwner}/${pullRequest?.repositoryName}/${pullRequest?.pullRequestNumber}`,
+              slug: title
+                .split("")
+                .filter((char) => char.match(/\w| |_|-/))
+                .join("")
+                .replace(/ /g, "-")
+                .toLowerCase(),
+            })
+              .catch((e) => console.error(e))
+              .then(() => console.log("done"))
+          }
+        />
       </div>
     </div>
   ) : null;

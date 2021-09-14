@@ -3,6 +3,7 @@ type Story = {
   pullRequestPath: string,
   slug: string,
   content: string,
+  publishedAt: string,
   owner: string
 }
 

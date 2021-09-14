@@ -10,9 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "uuid": "^8.3.2"
-  },
-  "devDependencies": {
-    "@types/uuid": "^8.3.1"
+    "aws-date-utils": "^1.0.0"
   }
 }

@@ -7,7 +7,7 @@ import Link from "next/link";
 
 import { listStories } from "../graphql/app-sync/queries";
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   const storyData: any = await API.graphql({ query: listStories });
   const stories = storyData.data.listStories;
   return {

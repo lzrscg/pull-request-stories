@@ -8,21 +8,10 @@ import Link from "next/link";
 import PullRequestStory from "../../components/pull-request-story";
 import { getStoryBySlug, listStories } from "../../graphql/app-sync/queries";
 
-export async function getStaticPaths() {
-  const storyData: any = await API.graphql({ query: listStories });
-  const paths = storyData.data.listStories.map((story: any) => ({
-    params: { slug: story.slug },
-  }));
-  return {
-    paths,
-    fallback: true,
-  };
-}
-
 // I'm just trying to get out the MVP lol
 // eslint-disable-next-line
 // @ts-ignore
-export async function getStaticProps({ params }) {
+export async function getServerSideProps({ params }) {
   const { slug } = params;
   const storyData: any = await API.graphql({
     query: getStoryBySlug,

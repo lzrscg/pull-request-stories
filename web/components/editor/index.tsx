@@ -12,6 +12,7 @@ import { ProseMirror, useProseMirror } from "use-prosemirror";
 
 import CodeDiffView from "../../classes/prosemirror/code-diff-view";
 import { IPullRequest } from "../../interfaces/pull-request.interface";
+import { IPullRequestDiff } from "../../interfaces/pull-request-diff.interface";
 import { NodeViews } from "./prosemirror.types";
 
 const toggleBold = toggleMarkCommand(schema.marks.strong);
@@ -31,10 +32,16 @@ function prepareForParsing(content: string): Node {
 type Props = {
   initialContent: string;
   pullRequest?: IPullRequest;
+  diffs?: IPullRequestDiff[];
   onChange: (mdx: string) => void;
 };
 
-const Editor: React.FC<Props> = ({ initialContent, pullRequest, onChange }) => {
+const Editor: React.FC<Props> = ({
+  initialContent,
+  pullRequest,
+  diffs,
+  onChange,
+}) => {
   const opts: Parameters<typeof useProseMirror>[0] = {
     schema,
     doc: DOMParser.fromSchema(schema).parse(prepareForParsing(initialContent)),
@@ -62,19 +69,28 @@ const Editor: React.FC<Props> = ({ initialContent, pullRequest, onChange }) => {
 
     const turndownService = new TurndownService();
     const markdown: string = turndownService.turndown(tmp.innerHTML);
-    if (pullRequest) {
+    if (pullRequest && diffs) {
       const textWithFullComponent = markdown.replace(
         /<PullRequestDiff\s+path="\S+"\s*\/>/gm,
         (originalText) => {
           const whiteSpaceDelimited = originalText.split(/\s/);
           const [_, ...withoutOpeningTag] = whiteSpaceDelimited;
+          const path = /path="(?<path>[^"]+)"/g.exec(originalText)?.groups
+            ?.path;
+          if (!path) return "";
+          const diff = diffs.find((diff) => diff.path === path);
+          if (!diff) return "";
           return `<PullRequestDiff repositoryOwner="${
             pullRequest.repositoryOwner
           }" repositoryName="${
             pullRequest.repositoryName
           }" pullRequestNumber="${
             pullRequest.pullRequestNumber
-          }" ${withoutOpeningTag.join(" ")}`;
+          }" oldFileRefOid="${diff.oldFileRefOid}" newFileRefOid="${
+            diff.newFileRefOid
+          }" numDiffLines="${diff.numDiffLines}" ${withoutOpeningTag.join(
+            " "
+          )}`;
         }
       );
       onChange(textWithFullComponent);

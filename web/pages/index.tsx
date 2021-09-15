@@ -1,50 +1,32 @@
 import "../configureAmplify";
 
+import { API } from "aws-amplify";
+import { parseExtendedISODate } from "aws-date-utils";
 import Head from "next/head";
 import Link from "next/link";
 
-import PullRequestStory from "../components/pull-request-story";
-import { IPullRequestDiff } from "../interfaces/pull-request-diff.interface";
-import test from "../lib/example";
-
-const fakeText = ` Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse suscipit diam nec nisi egestas, eu varius dui consequat. Suspendisse non tristique enim, eget pellentesque augue. Nullam ornare sed erat eget feugiat. Sed eu nunc ultrices, dignissim nisi sit amet, convallis purus. Cras ullamcorper consequat molestie. Ut sit amet aliquam risus, quis molestie massa. Phasellus rutrum, risus sit amet ornare lobortis, odio sapien tempor enim, ut fermentum nisl ex ut arcu. Integer sed mi non nulla mollis placerat vitae quis lacus. Praesent odio felis, maximus aliquet diam at, bibendum dictum dolor. Fusce lacinia feugiat vehicula. Donec ullamcorper a eros vel ultricies. Quisque tincidunt nec est laoreet finibus. In quis sollicitudin quam.
-
-Vestibulum accumsan at ante id euismod. Sed ex sem, porta ut ex ac, tincidunt pellentesque velit. Quisque mi metus, mollis at sem eget, molestie euismod ante. Sed sagittis elit nec quam auctor, sit amet maximus velit ornare. Vestibulum ac erat at nibh sagittis dignissim. Sed imperdiet quam sit amet risus lobortis dapibus. Maecenas tincidunt, enim vitae venenatis facilisis, dolor lectus scelerisque lacus, ut luctus nisi turpis gravida velit. Aenean pharetra nisi quis metus vulputate aliquam. Fusce laoreet venenatis nunc.
-
-Donec auctor in est at cursus. Ut nisi nisi, gravida eget sagittis et, aliquam ullamcorper lectus. Duis congue cursus lacinia. Aenean bibendum, justo vitae suscipit iaculis, lorem dui consectetur dolor, eu consectetur lectus orci eu neque. Suspendisse fringilla bibendum venenatis. Sed dictum vel purus nec gravida. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Suspendisse potenti. Suspendisse a rutrum augue. Duis et turpis orci. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Suspendisse lectus justo, cursus vel nibh sed, imperdiet vulputate dolor. Integer a eros metus. Etiam tellus ante, commodo sit amet tempor eget, semper faucibus nibh. Quisque non euismod nulla. `;
+import { listStories } from "../graphql/app-sync/queries";
 
 export async function getStaticProps() {
-  const diffs = test();
-
+  const storyData: any = await API.graphql({ query: listStories });
+  const stories = storyData.data.listStories;
   return {
     props: {
-      diffs,
+      stories,
     },
   };
 }
 
 type Props = {
-  diffs: IPullRequestDiff[];
+  stories: any[];
 };
 
-const Post: React.FC<Props> = function ({ diffs }) {
-  const sections = diffs.map((diff) => {
-    return {
-      heading: `About ${diff.path}`,
-      commentary: fakeText,
-      diff,
-    };
-  });
-
+const Post: React.FC<Props> = function ({ stories }) {
   type NavLink = {
     text: string;
     href: string;
   };
   const headerNavLinks: NavLink[] = [
-    {
-      text: "Mission",
-      href: "#",
-    },
     {
       text: "Create a Story",
       href: "/new",
@@ -54,7 +36,7 @@ const Post: React.FC<Props> = function ({ diffs }) {
   return (
     <div className="antialiased max-w-3xl px-4 mx-auto sm:px-6 xl:max-w-5xl xl:px-0">
       <Head>
-        <title>My First Pull Request - Pull Request Stories</title>
+        <title>Pull Request Stories</title>
         <link
           href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
           rel="stylesheet"
@@ -85,39 +67,68 @@ const Post: React.FC<Props> = function ({ diffs }) {
           </div>
         </header>
         <main className="mb-auto">
-          <article>
-            <div className="xl:divide-y xl:divide-gray-200">
-              <header className="pt-6 xl:pb-6">
-                <div className="space-y-1 text-center">
-                  <dl className="space-y-10">
-                    <div>
-                      <dd className="text-base font-medium leading-6 text-gray-500">
-                        <time>January 1, 2021</time>
-                      </dd>
-                    </div>
-                  </dl>
-                  <div>
-                    <h1 className="text-3xl font-extrabold leading-9 tracking-tight text-gray-900sm:text-4xl sm:leading-10 md:text-5xl md:leading-14">
-                      My First Pull Request
-                    </h1>
-                  </div>
-                </div>
-              </header>
-              <div
-                className="pb-8 divide-y divide-gray-200 xl:divide-y-0 xl:grid xl:grid-cols-4 xl:gap-x-6"
-                style={{ gridTemplateRows: "auto 1fr" }}
-              >
-                <dl className="pt-6 pb-10 xl:pt-11 xl:border-b xl:border-gray-200">
-                  <dd>By LZRS</dd>
-                </dl>
-                <div className="divide-y divide-gray-200 xl:pb-0 xl:col-span-3 xl:row-span-2">
-                  <div className="pt-10 pb-8 max-w-none">
-                    <PullRequestStory sections={sections} />
-                  </div>
-                </div>
-              </div>
+          <div className="divide-y divide-gray-200 dark:divide-gray-700">
+            <div className="pt-6 pb-8 space-y-2 md:space-y-5">
+              <h1 className="text-3xl font-extrabold leading-9 tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl sm:leading-10 md:text-6xl md:leading-14">
+                Latest
+              </h1>
+              <p className="text-lg leading-7 text-gray-500 dark:text-gray-400">
+                Stories about code and people
+              </p>
             </div>
-          </article>
+            <ul className="divide-y divide-gray-200 dark:divide-gray-700">
+              {!stories.length && "No posts found."}
+              {stories.slice(0, 10).map((story: any) => {
+                const { slug, publishedAt, pullRequestPath, title } = story;
+                const [repositoryOwner, repositoryName] =
+                  pullRequestPath.split("/");
+                return (
+                  <li key={slug} className="py-12">
+                    <article>
+                      <div className="space-y-2 xl:grid xl:grid-cols-4 xl:space-y-0 xl:items-baseline">
+                        <dl>
+                          <dt className="sr-only">Published on</dt>
+                          <dd className="text-base font-medium leading-6 text-gray-500 dark:text-gray-400">
+                            <time>
+                              {parseExtendedISODate(
+                                publishedAt
+                              ).toLocaleDateString("en-US", {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                              })}
+                            </time>
+                          </dd>
+                        </dl>
+                        <div className="space-y-5 xl:col-span-3">
+                          <div className="space-y-6">
+                            <div>
+                              <h2 className="text-2xl font-bold leading-8 tracking-tight text-gray-900 dark:text-gray-100">
+                                <Link href={`/story/${slug}`}>{title}</Link>
+                              </h2>
+                            </div>
+                            <div className="prose text-gray-500 max-w-none dark:text-gray-400">
+                              This story is about contributing to{" "}
+                              {repositoryName}, which is a repo created by{" "}
+                              {repositoryOwner}.
+                            </div>
+                          </div>
+                          <div className="text-base font-medium leading-6 text-primary-500 hover:text-primary-600 dark:hover:text-primary-400">
+                            <Link
+                              href={`/story/${slug}`}
+                              aria-label={`Read "${title}"`}
+                            >
+                              Read more &rarr;
+                            </Link>
+                          </div>
+                        </div>
+                      </div>
+                    </article>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
         </main>
       </div>
     </div>

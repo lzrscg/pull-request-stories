@@ -1,8 +1,8 @@
 import { Amplify, API, Auth } from "aws-amplify";
 import Head from "next/head";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
-// Against my better judgement
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import AsyncSelect from "react-select/async";
 
 import awsconfig from "../aws-exports";
@@ -11,6 +11,7 @@ import NewPostControlBar from "../components/new-post-control-bar";
 import { createStory } from "../graphql/app-sync/mutations";
 import { StoryInput } from "../graphql/app-sync-api";
 import { IPullRequest } from "../interfaces/pull-request.interface";
+import { IPullRequestDiff } from "../interfaces/pull-request-diff.interface";
 import {
   getPullRequestDiffs,
   listAuthenticatedUsersPullRequests,
@@ -23,9 +24,10 @@ function NewPost() {
   const [pullRequest, setPullRequest] = useState<IPullRequest | undefined>(
     undefined
   );
+  const [diffs, setDiffs] = useState<IPullRequestDiff[] | undefined>(undefined);
   const [initialEditorContent, setInitialEditorContent] = useState<string>("");
   const [editorContent, setEditorContent] = useState<string>("");
-  const headerNavLinks = ["Mission", "Create a Story"];
+  const headerNavLinks = ["Create a Story"];
 
   type OptionType = { label: string; value: any };
   type OptionsType = Array<OptionType>;
@@ -45,7 +47,6 @@ function NewPost() {
               };
             })
             .filter((pullRequestOption) => {
-              console.log(pullRequestOption);
               return pullRequestOption.label.indexOf(filterTerm) !== -1;
             });
         }
@@ -81,6 +82,7 @@ function NewPost() {
         .join("\n\n")}
       `;
 
+      setDiffs(diffs);
       setInitialEditorContent(initialText);
     });
   }
@@ -95,12 +97,14 @@ function NewPost() {
     }
   });
 
+  const router = useRouter();
+
   return user ? (
     <div className="h-screen w-screen flex flex-col">
       <div className="w-full flex-grow flex-shrink overflow-y-scroll">
         <div className="max-w-3xl px-4 mx-auto sm:px-6 xl:max-w-5xl xl:px-0">
           <Head>
-            <title>My First Pull Request - Pull Request Stories</title>
+            <title>New Pull Request Story</title>
             <link
               href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
               rel="stylesheet"
@@ -138,7 +142,13 @@ function NewPost() {
                       <dl className="space-y-10">
                         <div>
                           <dd className="text-base font-medium leading-6 text-gray-500">
-                            <time>January 1, 2021</time>
+                            <time>
+                              {new Date().toLocaleDateString("en-US", {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                              })}
+                            </time>
                           </dd>
                         </div>
                       </dl>
@@ -196,6 +206,7 @@ function NewPost() {
                           key={initialEditorContent}
                           initialContent={initialEditorContent}
                           pullRequest={pullRequest}
+                          diffs={diffs}
                           onChange={(mdx) => setEditorContent(mdx)}
                         />
                       </div>
@@ -209,21 +220,22 @@ function NewPost() {
       </div>
       <div className="flex-grow-0 flex-shrink">
         <NewPostControlBar
-          onPublish={() =>
+          onPublish={() => {
+            const slug = title
+              .split("")
+              .filter((char) => char.match(/\w| |_|-/))
+              .join("")
+              .replace(/ /g, "-")
+              .toLowerCase();
             createNewStory({
               title,
               content: editorContent,
-              pullRequestPath: `${pullRequest?.repositoryOwner}/${pullRequest?.repositoryName}/${pullRequest?.pullRequestNumber}`,
-              slug: title
-                .split("")
-                .filter((char) => char.match(/\w| |_|-/))
-                .join("")
-                .replace(/ /g, "-")
-                .toLowerCase(),
+              pullRequestPath: `${pullRequest?.repositoryOwner}/${pullRequest?.repositoryName}/pull/${pullRequest?.pullRequestNumber}`,
+              slug,
             })
               .catch((e) => console.error(e))
-              .then(() => console.log("done"))
-          }
+              .then(() => router.push("/story/" + slug));
+          }}
         />
       </div>
     </div>

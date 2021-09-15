@@ -21,7 +21,7 @@ type AppSyncEvent = {
 
 exports.handler = async (event:AppSyncEvent) => {
     switch (event.info.fieldName) {
-        case "getStoryById":
+        case "getStoryBySlug":
           return await getStoryBySlug(event.arguments.storySlug)
         case "createStory": {
           const { username } = event.identity

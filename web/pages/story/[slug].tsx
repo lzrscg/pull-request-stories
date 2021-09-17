@@ -114,8 +114,7 @@ const Post: React.FC<Props> = function ({ story }) {
                         Thank you for trying out Pull Request Stories. This is a
                         platform for telling the story for how and why you wrote
                         the code behind your PR. We have just released our alpha
-                        website and have much more coming soon. To learn more
-                        about the PR in this story click the link below:
+                        website and have much more coming soon.
                       </p>
                     </span>
                   </dd>

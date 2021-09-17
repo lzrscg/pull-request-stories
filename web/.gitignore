@@ -64,3 +64,5 @@ amplify/team-provider-info.json
 cdk-exports.json
 .serverless
 .serverless_nextjs
+
+.graphqlconfig.yml

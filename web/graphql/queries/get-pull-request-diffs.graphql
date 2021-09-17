@@ -1,0 +1,16 @@
+query GetPullRequestDiffs($repositoryName: String!, $repositoryOwner: String!, $pullRequestNumber: Int!) { 
+    repository(name: $repositoryName, owner: $repositoryOwner) { 
+        pullRequest(number: $pullRequestNumber) {
+            baseRefOid
+            headRefOid
+            # Only pulling first 100 files with changes
+            files(first:100) {
+                nodes {
+                    path
+                    additions
+                    deletions
+                }
+            }
+        }
+    }
+}

@@ -2,3 +2,9 @@ node_modules
 .next
 public
 package-lock.json
+graphql
+aws-exports.js
+cdk-exports.js
+.serverless
+.serverless_nextjs
+.graphqlconfig.yml

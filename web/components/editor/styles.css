@@ -1,0 +1,7 @@
+/* Using CSS stylesheet because code adapted from https://codesandbox.io/s/use-prosemirror-basic-example-nie7f?file=/src/styles.css:0-784 */
+
+.ProseMirror {
+  height: 100%;
+  outline: none;
+  padding: 0;
+}

@@ -1,18 +1,18 @@
-import createPost from './createPost'
-import deletePost from './deletePost'
-import getPostById from './getPostById'
-import listPosts from './listPosts'
-import updatePost from './updatePost'
-import postsByUsername from './postsByUsername'
-import Post from './Post'
+import createStory from './createStory'
+import deleteStory from './deleteStory'
+import getStoryBySlug from './getStoryBySlug'
+import listStories from './listStories'
+import updateStory from './updateStory'
+import storiesByUsername from './storiesByUsername'
+import Story from './Story'
 
 type AppSyncEvent = {
    info: {
      fieldName: string
   },
    arguments: {
-     postId: string,
-     post: Post
+     storySlug: string,
+     story: Story
   },
   identity: {
     username: string
@@ -21,25 +21,25 @@ type AppSyncEvent = {
 
 exports.handler = async (event:AppSyncEvent) => {
     switch (event.info.fieldName) {
-        case "getPostById":
-          return await getPostById(event.arguments.postId)
-        case "createPost": {
+        case "getStoryBySlug":
+          return await getStoryBySlug(event.arguments.storySlug)
+        case "createStory": {
           const { username } = event.identity
-          return await createPost(event.arguments.post, username)
+          return await createStory(event.arguments.story, username)
         }
-        case "listPosts":
-          return await listPosts();
-        case "deletePost": {
+        case "listStories":
+          return await listStories();
+        case "deleteStory": {
           const { username } = event.identity
-          return await deletePost(event.arguments.postId, username)
+          return await deleteStory(event.arguments.storySlug, username)
         }
-        case "updatePost": {
+        case "updateStory": {
           const { username } = event.identity
-          return await updatePost(event.arguments.post, username)
+          return await updateStory(event.arguments.story, username)
         }
-        case "postsByUsername": {
+        case "storiesByUsername": {
           const { username } = event.identity
-          return await postsByUsername(username)
+          return await storiesByUsername(username)
         }
         default:
           return null

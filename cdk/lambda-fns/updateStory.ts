@@ -11,11 +11,11 @@ type Params = {
   ReturnValues: string,
 }
 
-async function updatePost(post: any, username: string) {
+async function updateStory(story: any, username: string) {
   let params : Params = {
-    TableName: process.env.POST_TABLE,
+    TableName: process.env.TABLE,
     Key: {
-      id: post.id
+      slug: story.slug
     },
     UpdateExpression: "",
     ConditionExpression: "#owner = :owner",
@@ -28,23 +28,23 @@ async function updatePost(post: any, username: string) {
     ReturnValues: "UPDATED_NEW"
   }
   let prefix = "set ";
-  let attributes = Object.keys(post);
+  let attributes = Object.keys(story);
   for (let i=0; i<attributes.length; i++) {
     let attribute = attributes[i];
-    if (attribute !== "id") {
+    if (attribute !== "slug") {
       params["UpdateExpression"] += prefix + "#" + attribute + " = :" + attribute;
-      params["ExpressionAttributeValues"][":" + attribute] = post[attribute];
+      params["ExpressionAttributeValues"][":" + attribute] = story[attribute];
       params["ExpressionAttributeNames"]["#" + attribute] = attribute;
       prefix = ", ";
     }
   }
   try {
     await docClient.update(params).promise()
-    return post
+    return story
   } catch (err) {
     console.log('DynamoDB error: ', err)
     return null
   }
 }
 
-export default updatePost
+export default updateStory

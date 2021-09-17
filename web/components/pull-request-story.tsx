@@ -8,16 +8,18 @@ type Props = {
 };
 
 const PullRequestStory: React.FC<Props> = function ({ markdown }) {
-  const jsx = markdown.matchAll(/<PullRequestDiff.+\/>/g);
+  const jsx = Array.from(markdown.matchAll(/<PullRequestDiff.+\/>/g));
   const prose = markdown.split(/<PullRequestDiff.+\/>/g);
 
-  const markdownSections = Array.from(jsx).reduce((prev, cur, index) => {
-    if (markdown.search(/<PullRequestDiff.+\/>/) === 0) {
-      return [...prev, cur[0], prose[index]];
-    } else {
-      return [...prev, prose[index], cur[0]];
-    }
-  }, []);
+  const markdownSections = jsx.length
+    ? jsx.reduce((prev, cur, index) => {
+        if (markdown.search(/<PullRequestDiff.+\/>/) === 0) {
+          return [...prev, cur[0], prose[index]];
+        } else {
+          return [...prev, prose[index], cur[0]];
+        }
+      }, [])
+    : [markdown];
 
   const markdownWithJSX = markdownSections.map((section, index) => {
     if (section.match(/<PullRequestDiff.+\/>/)) {

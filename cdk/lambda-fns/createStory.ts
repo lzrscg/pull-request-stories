@@ -9,7 +9,8 @@ async function createStory(story: Story, username: string) {
   const storyData = { ...story, owner: username, publishedAt: dateToExtendedISODate(new Date())  }
   const params = {
     TableName: process.env.TABLE,
-    Item: storyData
+    Item: storyData,
+    ConditionExpression: 'attribute_not_exists(slug)'
   }
   try {
     await docClient.put(params).promise()

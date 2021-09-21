@@ -3,17 +3,22 @@ import "prosemirror-view/style/prosemirror.css";
 import { baseKeymap, Command, toggleMark } from "prosemirror-commands";
 import { history, redo, undo } from "prosemirror-history";
 import { keymap } from "prosemirror-keymap";
-import { DOMParser, DOMSerializer, MarkType } from "prosemirror-model";
-import { schema } from "prosemirror-schema-basic";
+import {
+  defaultMarkdownParser,
+  defaultMarkdownSerializer,
+  schema,
+} from "prosemirror-markdown";
+import { MarkType } from "prosemirror-model";
 import { EditorState, Transaction } from "prosemirror-state";
-import React, { Ref } from "react";
-import TurndownService from "turndown";
+import React from "react";
 import { ProseMirror, useProseMirror } from "use-prosemirror";
 
 import CodeDiffView from "../../classes/prosemirror/code-diff-view";
 import { IPullRequest } from "../../interfaces/pull-request.interface";
 import { IPullRequestDiff } from "../../interfaces/pull-request-diff.interface";
 import { NodeViews } from "./prosemirror.types";
+import { buildInputRules } from "./prosemirror/inputrules";
+import { buildKeymap } from "./prosemirror/keymap";
 
 const toggleBold = toggleMarkCommand(schema.marks.strong);
 const toggleItalic = toggleMarkCommand(schema.marks.em);
@@ -21,13 +26,6 @@ const toggleItalic = toggleMarkCommand(schema.marks.em);
 const nodeViews: NodeViews = {
   codeDiff: CodeDiffView.create,
 };
-
-function prepareForParsing(content: string): Node {
-  const domNode = document.createElement("div");
-  domNode.innerText = content;
-
-  return domNode;
-}
 
 type Props = {
   initialContent: string;
@@ -44,31 +42,27 @@ const Editor: React.FC<Props> = ({
 }) => {
   const opts: Parameters<typeof useProseMirror>[0] = {
     schema,
-    doc: DOMParser.fromSchema(schema).parse(prepareForParsing(initialContent)),
+    doc: defaultMarkdownParser.parse(initialContent),
     plugins: [
       history(),
-      keymap({
+      /*keymap({
         ...baseKeymap,
         "Mod-z": undo,
         "Mod-y": redo,
         "Mod-Shift-z": redo,
         "Mod-b": toggleBold,
         "Mod-i": toggleItalic,
-      }),
+      }),*/
+      keymap(buildKeymap(schema)),
+      keymap(baseKeymap),
+      buildInputRules(schema),
     ],
   };
 
   const [state, setState] = useProseMirror(opts);
 
   function handleChange(state: EditorState) {
-    const fragment = DOMSerializer.fromSchema(schema).serializeFragment(
-      state.doc?.content
-    );
-    const tmp = document.createElement("div");
-    tmp.appendChild(fragment);
-
-    const turndownService = new TurndownService();
-    const markdown: string = turndownService.turndown(tmp.innerHTML);
+    const markdown = defaultMarkdownSerializer.serialize(state.doc);
     if (pullRequest && diffs) {
       const textWithFullComponent = markdown.replace(
         /<PullRequestDiff\s+path="\S+"\s*\/>/gm,
@@ -99,7 +93,7 @@ const Editor: React.FC<Props> = ({
   }
 
   return (
-    <div>
+    <div className="prose">
       {/*<div>
         <Button
           className="bold"

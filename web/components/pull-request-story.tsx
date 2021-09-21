@@ -69,13 +69,7 @@ const PullRequestStory: React.FC<Props> = function ({ markdown }) {
     } else {
       return (
         <div className="prose" key={index}>
-          <ReactMarkdown>
-            {section.replace(/\\(\W|(\d\.))/gm, (originalText) =>
-              originalText.charAt(2) !== "/"
-                ? originalText.slice(1)
-                : originalText
-            )}
-          </ReactMarkdown>
+          <ReactMarkdown>{section}</ReactMarkdown>
         </div>
       );
     }

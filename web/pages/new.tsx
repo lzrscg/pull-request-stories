@@ -71,16 +71,13 @@ function NewPost() {
     setPullRequest(value);
 
     getPullRequestDiffs(gitHubToken, value).then((diffs) => {
-      const initialText = `Hi! Thank you for trying out an early version of the story editor. Eventually, there will be many rich-text editing features. However, for now the text must be written in markdown.
-
-      To learn more about markdown, check out this URL: https://guides.github.com/features/mastering-markdown
-
-      The JSX components below represent the file diffs. When you publish this story, they will render the code diffs in-line. These are the diffs that are available to you corresponding to changed files in your pull request. Paste them anywhere you'd like them to be rendered in the document and delete the ones you don't want to use.
-
-      ${diffs
-        .map((diff) => `<PullRequestDiff path="${diff.path}" />`)
-        .join("\n\n")}
-      `;
+      const initialText =
+        "Hi! Thank you for trying out an early version of the story editor. Eventually, there will be many rich-text editing features. However, for now the text must be written in markdown.\n\n" +
+        "To learn more about markdown, check out this URL: https://guides.github.com/features/mastering-markdown\n\n" +
+        "The JSX components below represent the file diffs. When you publish this story, they will render the code diffs in-line. These are the diffs that are available to you corresponding to changed files in your pull request. Paste them anywhere you'd like them to be rendered in the document and delete the ones you don't want to use.\n\n" +
+        diffs
+          .map((diff) => `<PullRequestDiff path="${diff.path}" />`)
+          .join("\n\n");
 
       setDiffs(diffs);
       setInitialEditorContent(initialText);

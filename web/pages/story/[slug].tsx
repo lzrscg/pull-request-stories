@@ -116,7 +116,7 @@ const Post: React.FC<Props> = function ({ story }) {
                     <span className="prose">
                       <p className="xl:border-none border rounded p-3">
                         Thank you for trying out Pull Request Stories. This is a
-                        platform for telling the story for how and why you wrote
+                        platform for telling the story of how and why you wrote
                         the code behind your PR. We have just released our alpha
                         website and have much more coming soon.
                       </p>

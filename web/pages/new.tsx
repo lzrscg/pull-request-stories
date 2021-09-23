@@ -27,7 +27,20 @@ function NewPost() {
   const [diffs, setDiffs] = useState<IPullRequestDiff[] | undefined>(undefined);
   const [initialEditorContent, setInitialEditorContent] = useState<string>("");
   const [editorContent, setEditorContent] = useState<string>("");
-  const headerNavLinks = ["Create a Story"];
+  type NavLink = {
+    text: string;
+    href: string;
+  };
+  const headerNavLinks: NavLink[] = [
+    {
+      text: "Mission",
+      href: "/story/mission",
+    },
+    {
+      text: "Create a Story",
+      href: "/new",
+    },
+  ];
 
   type OptionType = { label: string; value: any };
   type OptionsType = Array<OptionType>;
@@ -121,9 +134,9 @@ function NewPost() {
               <div className="flex items-center text-base leading-5">
                 <div className="hidden sm:block">
                   {headerNavLinks.map((link) => (
-                    <Link key={link} href={`/${link}`}>
+                    <Link key={link.href} href={link.href}>
                       <a className="p-1 font-medium text-gray-900 sm:p-4">
-                        {link}
+                        {link.text}
                       </a>
                     </Link>
                   ))}

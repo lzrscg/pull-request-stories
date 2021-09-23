@@ -28,6 +28,10 @@ const Post: React.FC<Props> = function ({ stories }) {
   };
   const headerNavLinks: NavLink[] = [
     {
+      text: "Mission",
+      href: "/story/mission",
+    },
+    {
       text: "Create a Story",
       href: "/new",
     },

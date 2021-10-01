@@ -5,12 +5,14 @@ import listStories from './listStories'
 import updateStory from './updateStory'
 import storiesByUsername from './storiesByUsername'
 import Story from './Story'
+import getUserByUsername from './getUserByUsername'
 
 type AppSyncEvent = {
    info: {
      fieldName: string
   },
    arguments: {
+    username: string,
      storySlug: string,
      story: Story
   },
@@ -21,6 +23,8 @@ type AppSyncEvent = {
 
 exports.handler = async (event:AppSyncEvent) => {
     switch (event.info.fieldName) {
+        case "getUserByUsername":
+          return await getUserByUsername(event.arguments.username)
         case "getStoryBySlug":
           return await getStoryBySlug(event.arguments.storySlug)
         case "createStory": {

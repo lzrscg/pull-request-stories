@@ -26,6 +26,13 @@ export type UpdateStoryInput = {
   content?: string | null,
 };
 
+export type User = {
+  __typename: "User",
+  preferred_username?: string | null,
+  picture?: string | null,
+  name?: string | null,
+};
+
 export type CreateStoryMutationVariables = {
   story: StoryInput,
 };
@@ -63,6 +70,19 @@ export type UpdateStoryMutation = {
     content: string,
     publishedAt: string,
     owner: string,
+  } | null,
+};
+
+export type GetUserByUsernameQueryVariables = {
+  username: string,
+};
+
+export type GetUserByUsernameQuery = {
+  getUserByUsername?:  {
+    __typename: "User",
+    preferred_username?: string | null,
+    picture?: string | null,
+    name?: string | null,
   } | null,
 };
 

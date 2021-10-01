@@ -11,5 +11,8 @@
   "license": "ISC",
   "dependencies": {
     "aws-date-utils": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/aws-sdk": "^2.7.0"
   }
 }

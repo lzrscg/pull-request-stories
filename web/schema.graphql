@@ -21,7 +21,15 @@ input UpdateStoryInput {
   content: String
 }
 
+type User {
+  preferred_username: String,
+  picture: String,
+  name: String
+}
+
 type Query {
+  getUserByUsername(username: String!): User
+    @aws_api_key @aws_cognito_user_pools
   getStoryBySlug(storySlug: String!): Story
     @aws_api_key @aws_cognito_user_pools
   listStories: [Story]

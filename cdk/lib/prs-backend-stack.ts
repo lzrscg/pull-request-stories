@@ -6,6 +6,7 @@ import * as lambda from '@aws-cdk/aws-lambda'
 import * as route53 from '@aws-cdk/aws-route53'
 import * as route53targets from '@aws-cdk/aws-route53-targets'
 import * as acm from '@aws-cdk/aws-certificatemanager';
+import * as iam from '@aws-cdk/aws-iam';
 import { UserPoolIdentityProviderGithub } from '../vendor/github.com/lzrscg/cdk-user-pool-identity-provider-github'
 
 require('dotenv').config()
@@ -129,6 +130,11 @@ export class PrsBackendStack extends cdk.Stack {
 
     lambdaDs.createResolver({
       typeName: "Query",
+      fieldName: "getUserByUsername"
+    })
+
+    lambdaDs.createResolver({
+      typeName: "Query",
       fieldName: "getStoryBySlug"
     })
     
@@ -175,9 +181,18 @@ export class PrsBackendStack extends cdk.Stack {
 
     // enable the Lambda function to access the DynamoDB table (using IAM)
     table.grantFullAccess(postLambda)
+
+    const allowAdminGetUserPolicy = new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      actions: ['cognito-idp:AdminGetUser'],
+      resources: [userPool.userPoolArn],
+    });
+
+    postLambda.addToRolePolicy(allowAdminGetUserPolicy);
     
-    // Create an environment variable that we will use in the function code
+    // Create an environment variables that we will use in the function code
     postLambda.addEnvironment('TABLE', table.tableName);
+    postLambda.addEnvironment('USER_POOL_ID', userPool.userPoolId);
 
     new cdk.CfnOutput(this, "GraphQLAPIURL", {
       value: api.graphqlUrl

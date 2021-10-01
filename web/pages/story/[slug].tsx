@@ -3,10 +3,15 @@ import "../../configureAmplify";
 import { API } from "aws-amplify";
 import { parseExtendedISODate } from "aws-date-utils";
 import Head from "next/head";
+import Image from "next/image";
 import Link from "next/link";
 
 import PullRequestStory from "../../components/pull-request-story";
-import { getStoryBySlug, listStories } from "../../graphql/app-sync/queries";
+import {
+  getStoryBySlug,
+  getUserByUsername,
+  listStories,
+} from "../../graphql/app-sync/queries";
 
 // I'm just trying to get out the MVP lol
 // eslint-disable-next-line
@@ -18,18 +23,25 @@ export async function getServerSideProps({ params }) {
     variables: { storySlug: slug },
   });
 
+  const userData: any = await API.graphql({
+    query: getUserByUsername,
+    variables: { username: storyData.data.getStoryBySlug.owner },
+  });
+
   return {
     props: {
       story: storyData.data.getStoryBySlug,
+      user: userData.data.getUserByUsername,
     },
   };
 }
 
 type Props = {
   story: any;
+  user: any;
 };
 
-const Post: React.FC<Props> = function ({ story }) {
+const Post: React.FC<Props> = function ({ story, user }) {
   type NavLink = {
     text: string;
     href: string;
@@ -112,15 +124,37 @@ const Post: React.FC<Props> = function ({ story }) {
                 style={{ gridTemplateRows: "auto 1fr" }}
               >
                 <dl className="pt-6 pb-10 xl:pt-11 xl:border-b xl:border-gray-200">
+                  <dt className="sr-only">Authors</dt>
                   <dd>
-                    <span className="prose">
-                      <p className="xl:border-none border rounded p-3">
-                        Thank you for trying out Pull Request Stories. This is a
-                        platform for telling the story of how and why you wrote
-                        the code behind your PR. We have just released our alpha
-                        website and have much more coming soon.
-                      </p>
-                    </span>
+                    <ul className="flex justify-center space-x-8 xl:block sm:space-x-12 xl:space-x-0 xl:space-y-8">
+                      <li className="flex items-center space-x-2">
+                        {user.picture && (
+                          <Image
+                            src={user.picture}
+                            width="38px"
+                            height="38px"
+                            alt="avatar"
+                            className="w-10 h-10 rounded-full"
+                          />
+                        )}
+                        <dl className="text-sm font-medium leading-5 whitespace-nowrap">
+                          <dd className="text-gray-900 dark:text-gray-100">
+                            {user.name}
+                          </dd>
+                          <dd>
+                            {user.preferred_username && (
+                              <Link
+                                href={`https://github.com/${user.preferred_username}`}
+                              >
+                                <a className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400">
+                                  @{user.preferred_username}
+                                </a>
+                              </Link>
+                            )}
+                          </dd>
+                        </dl>
+                      </li>
+                    </ul>
                   </dd>
                 </dl>
                 <div className="divide-y divide-gray-200 xl:pb-0 xl:col-span-3 xl:row-span-2">

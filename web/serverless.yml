@@ -1,4 +1,6 @@
-nextamplified:
+pullrequeststories:
   component: "@sls-next/serverless-component@3.3.0"
   inputs:
     domain: "pullrequeststories.com"
+    build:
+      cmd: "../node_modules/.bin/next"

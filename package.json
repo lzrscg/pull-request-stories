@@ -1,0 +1,26 @@
+{
+  "name": "pull-request-stories",
+  "version": "1.0.0",
+  "description": "Stories about code and people.",
+  "bin": "app.js",
+  "scripts": {
+    "web": "cd web && npm run dev",
+    "build": "tsc",
+    "build:web": "cd web && npm run build",
+    "deploy:web": "cd web && serverless"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GOSPEL777/pull-request-stories"
+  },
+  "author": "LZRS",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/GOSPEL777/pull-request-stories/issues"
+  },
+  "homepage": "https://pullrequeststories.com",
+  "workspaces": [
+    "web",
+    "backend"
+  ]
+}

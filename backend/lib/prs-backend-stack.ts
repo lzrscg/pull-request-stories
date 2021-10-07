@@ -101,7 +101,7 @@ export class PrsBackendStack extends cdk.Stack {
       logConfig: {
         fieldLogLevel: appsync.FieldLogLevel.ALL,
       },
-      schema: appsync.Schema.fromAsset('./graphql/schema.graphql'),
+      schema: appsync.Schema.fromAsset('backend/graphql/schema.graphql'),
       authorizationConfig: {
         defaultAuthorization: {
           authorizationType: appsync.AuthorizationType.API_KEY,
@@ -121,7 +121,7 @@ export class PrsBackendStack extends cdk.Stack {
     const postLambda = new lambda.Function(this, 'AppSyncPostHandler', {
       runtime: lambda.Runtime.NODEJS_12_X,
       handler: 'main.handler',
-      code: lambda.Code.fromAsset('lambda-fns'),
+      code: lambda.Code.fromAsset('backend/lambda'),
       memorySize: 1024
     })
     

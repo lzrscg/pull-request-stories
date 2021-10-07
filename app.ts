@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
 import * as cdk from '@aws-cdk/core';
-import { PrsBackendStack } from '../lib/prs-backend-stack';
+import { PrsBackendStack } from './backend/lib/prs-backend-stack';
 
 const app = new cdk.App();
 new PrsBackendStack(app, 'PrsBackendStack', {

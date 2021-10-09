@@ -118,7 +118,7 @@ export class PrsBackendStack extends cdk.Stack {
       },
     });
 
-    const postLambda = new lambda.Function(this, 'AppSyncPostHandler', {
+    const lambdaFunction = new lambda.Function(this, 'AppSyncPostHandler', {
       runtime: lambda.Runtime.NODEJS_12_X,
       handler: 'main.handler',
       code: lambda.Code.fromAsset('backend/lambda'),
@@ -126,7 +126,7 @@ export class PrsBackendStack extends cdk.Stack {
     })
     
     // Set the new Lambda function as a data source for the AppSync API
-    const lambdaDs = api.addLambdaDataSource('lambdaDatasource', postLambda)
+    const lambdaDs = api.addLambdaDataSource('lambdaDatasource', lambdaFunction)
 
     lambdaDs.createResolver({
       typeName: "Query",
@@ -180,7 +180,7 @@ export class PrsBackendStack extends cdk.Stack {
     })
 
     // enable the Lambda function to access the DynamoDB table (using IAM)
-    table.grantFullAccess(postLambda)
+    table.grantFullAccess(lambdaFunction)
 
     const allowAdminGetUserPolicy = new iam.PolicyStatement({
       effect: iam.Effect.ALLOW,
@@ -188,11 +188,11 @@ export class PrsBackendStack extends cdk.Stack {
       resources: [userPool.userPoolArn],
     });
 
-    postLambda.addToRolePolicy(allowAdminGetUserPolicy);
+    lambdaFunction.addToRolePolicy(allowAdminGetUserPolicy);
     
     // Create an environment variables that we will use in the function code
-    postLambda.addEnvironment('TABLE', table.tableName);
-    postLambda.addEnvironment('USER_POOL_ID', userPool.userPoolId);
+    lambdaFunction.addEnvironment('TABLE', table.tableName);
+    lambdaFunction.addEnvironment('USER_POOL_ID', userPool.userPoolId);
 
     new cdk.CfnOutput(this, "GraphQLAPIURL", {
       value: api.graphqlUrl

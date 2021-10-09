@@ -7,7 +7,8 @@
     "web": "cd web && npm run dev",
     "build": "tsc",
     "build:web": "cd web && npm run build",
-    "deploy:web": "cd web && serverless"
+    "deploy:web": "cd web && serverless",
+    "deploy:backend": "cdk deploy -O web/cdk-exports.json"
   },
   "repository": {
     "type": "git",

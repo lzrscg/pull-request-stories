@@ -4,6 +4,7 @@
   "description": "Stories about code and people.",
   "bin": "app.js",
   "scripts": {
+    "postinstall": "cd backend/lambda && npm install",
     "web": "cd web && npm run dev",
     "build": "tsc",
     "build:web": "cd web && npm run build",
